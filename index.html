@@ -1,0 +1,2470 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FBFAF6">
+  <title>E-Saud — Connect • Trade • Grow</title>
+  <link rel="icon" type="image/svg+xml" href="esaud-mark-fallback.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--sky);
+      color: var(--ink);
+      font: 15px/1.45 var(--font-body);
+    }
+    .statusbar { color: #d7e0d7; }
+    .auth-screen.welcome-stage .auth-art { background: linear-gradient(180deg,#1d2b22 0 56%,#24382a 100%); }
+    @media (max-width: 649px) {
+      body { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .app {
+      position: relative;
+      width: min(100%, 430px);
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      box-shadow: 0 0 48px #132a1a14;
+      overflow: hidden;
+      padding-bottom: 78px;
+    }
+    .statusbar, .topbar, .offline-banner, .bottom-nav { flex: 0 0 auto; }
+    main { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; background: var(--paper); }
+    main::-webkit-scrollbar { display: none; }
+    .statusbar {
+      height: 23px;
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 22px 0;
+      font-size: 11px;
+      font-weight: 750;
+      color: #242b26;
+      background: var(--paper);
+    }
+    .topbar {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      background: linear-gradient(180deg,#e7ece0,#f2efe5);
+    }
+    .icon-button {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      font-size: 23px;
+    }
+    .icon-button:hover { background: #eaf5ec; }
+    .brand {
+      color: #33b854;
+      text-shadow: 0 3px 10px #43bc4a55;
+      font-size: 27px;
+      font-weight: 950;
+      letter-spacing: -1.4px;
+    }
+    .brand-leaf { width: 23px; height: 23px; margin-right: 4px; vertical-align: middle; flex: 0 0 auto; }
+    .top-spacer { flex: 1; }
+    .offline-toggle {
+      border: 1px solid #dfe7df;
+      border-radius: 22px;
+      padding: 7px 10px;
+      background: white;
+      color: var(--deep);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .offline-toggle .signal { color: #35a458; }
+    .offline .offline-toggle { color: #865b16; background: #fff7df; border-color: #efdfa8; }
+    .offline .offline-toggle .signal { color: #d89b2a; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    #chatCall[hidden] { display: none; }
+    .app.auth-mode, .app.splash-mode { padding-bottom: 0; }
+    .app.auth-mode .topbar, .app.auth-mode .bottom-nav,
+    .app.splash-mode .topbar, .app.splash-mode .bottom-nav { display: none; }
+    .app.auth-mode .auth-screen { min-height: 100%; padding-top: 12px; }
+    .app.auth-mode .offline-banner, .app.splash-mode .offline-banner { display: none; }
+    .app.splash-mode main { overflow: hidden; }
+    .splash-screen { min-height: 100%; position: relative; overflow: hidden; background: var(--sky); }
+    .splash-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .splash-brand { position: absolute; z-index: 1; top: calc(12% + env(safe-area-inset-top)); left: 50%; width: min(76%, 310px); transform: translateX(-50%); text-align: center; }
+    .splash-mark { width: clamp(72px, 20vw, 110px); height: clamp(66px, 18vw, 100px); display: block; margin: 0 auto -2px; }
+    .splash-wordmark { display: block; font: 700 clamp(38px, 10vw, 52px)/1 var(--font-heading); color: var(--green); letter-spacing: -.8px; }
+    .splash-tagline { margin: 9px auto 0; color: var(--text-green); font: 700 clamp(15px, 4vw, 18px)/1.35 var(--font-body); }
+    .splash-footer { position: absolute; z-index: 1; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100% - 32px); padding: 8px 16px; transform: translateX(-50%); border-radius: 20px; background: #ffffff9c; color: #fff; font: 700 11px/1.3 var(--font-body); text-align: center; white-space: nowrap; box-shadow: 0 2px 12px #163d1c20; }
+    .screen h1, .screen h2, .screen h3, .brand, .auth-screen h1 { font-family: var(--font-heading); }
+    .auth-screen.welcome-stage .auth-art { height: min(38vh,340px); min-height: 260px; margin-top: 0; }
+    .auth-screen.welcome-stage .auth-art {
+      height: min(52vh,440px);
+      min-height: 300px;
+      margin: 0 -23px 20px;
+      color: var(--deep);
+      justify-content: flex-start;
+      padding-top: 20px;
+      background: linear-gradient(180deg,#fff 0 56%,#eef6e9 100%);
+    }
+    .auth-screen.account-stage .auth-art:before, .auth-screen.account-stage .auth-art:after,
+    .auth-screen.role-stage .auth-art:before, .auth-screen.role-stage .auth-art:after { display: none; }
+    .auth-screen.account-stage .welcome-landscape, .auth-screen.role-stage .welcome-landscape { display: none; }
+    .content { padding: 10px 18px 22px; }
+    .searchbox {
+      height: 41px;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid #ccd5ce;
+      border-radius: 12px;
+      padding: 0 12px;
+      color: #68756c;
+      background: #fcfdfb;
+    }
+    .searchbox input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 13px; }
+    .home-search-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .search-camera { flex: 0 0 auto; border: 0; padding: 3px; background: transparent; color: var(--green); font-size: 20px; }
+    .home-quick-button { position: relative; flex: 0 0 34px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; color: var(--deep); font-size: 23px; }
+    .home-quick-badge { position: absolute; top: -4px; right: -5px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9px; background: #d65b43; color: white; font-size: 9px; line-height: 16px; font-weight: 800; text-align: center; }
+    .cart-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #e6ece6; }
+    .cart-item .order-thumb { flex: 0 0 42px; }
+    .cart-item-copy { flex: 1; min-width: 0; }
+    .cart-item-copy strong, .cart-item-copy small { display: block; }
+    .cart-item-copy small { margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .cart-quantity { display: flex; align-items: center; gap: 8px; }
+    .cart-quantity button { width: 27px; height: 27px; border: 1px solid #dce7dd; border-radius: 8px; background: #fff; color: var(--deep); font-size: 16px; }
+    .offline-banner {
+      display: none;
+      padding: 9px 18px;
+      background: #fff3cf;
+      color: #694d15;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .offline .offline-banner { display: block; }
+    .landscape {
+      position: relative;
+      height: 151px;
+      overflow: hidden;
+      border-radius: 18px;
+      margin-top: 16px;
+      padding: 15px;
+      background:
+        radial-gradient(ellipse at 87% 24%, #fff8 0 8%, transparent 8.5%),
+        linear-gradient(180deg,#9de6f2 0 38%, transparent 38%),
+        linear-gradient(166deg,transparent 0 42%,#9cca70 42% 60%,transparent 60%),
+        linear-gradient(11deg, #f7db77 0 28%, #88c65b 28% 42%, #5eaa4c 42% 55%, #bee282 55% 100%);
+    }
+    .landscape:before, .landscape:after {
+      content: "";
+      position: absolute;
+      bottom: -31px;
+      width: 150%;
+      height: 83px;
+      left: -20%;
+      border-radius: 50% 50% 0 0;
+      background: repeating-linear-gradient(169deg,#d9bc52 0 7px,#e6d476 7px 14px);
+      transform: rotate(-3deg);
+    }
+    .landscape:after {
+      bottom: -57px;
+      left: -35%;
+      background: #47984e;
+      transform: rotate(4deg);
+    }
+    .landscape-copy { position: relative; z-index: 1; max-width: 62%; }
+    .landscape-copy strong { display: block; font-size: 20px; line-height: 1.15; }
+    .landscape-copy span { display: block; font-size: 12px; margin-top: 7px; }
+    .basket { position: absolute; z-index: 1; right: 19px; bottom: 13px; font-size: 76px; filter: drop-shadow(0 5px 3px #4d733333); }
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin: 21px 0 11px;
+    }
+    .section-title h2 { margin: 0; font-size: 18px; letter-spacing: -.4px; }
+    .text-button { color: var(--green); border: 0; background: transparent; padding: 5px 2px; font-size: 12px; font-weight: 800; }
+    .category-row { display: flex; gap: 7px; overflow-x: auto; margin: 0 -18px 12px; padding: 0 18px 2px; scrollbar-width: none; }
+    .category-row::-webkit-scrollbar { display: none; }
+    .chip {
+      flex: 0 0 auto;
+      border: 1px solid #e6ebe4;
+      border-radius: 22px;
+      padding: 7px 12px;
+      color: #59645d;
+      background: white;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .chip.active { background: #e1f8e9; border-color: #b6e8c4; color: var(--deep); }
+    .product-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+    .product-card { border: 1px solid #e4e9e3; border-radius: 14px; overflow: hidden; background: white; }
+    .product-image {
+      height: 104px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      font-size: 54px;
+      background: radial-gradient(ellipse at 50% 100%, #ecf5d4, #cce8be);
+    }
+    .product-card:nth-child(4n+2) .product-image { background: radial-gradient(ellipse at 50% 100%,#f7f0d7,#e9d8b8); }
+    .product-card:nth-child(4n+3) .product-image { background: radial-gradient(ellipse at 50% 100%,#e0f0d7,#c5e1ba); }
+    .product-card:nth-child(4n) .product-image { background: radial-gradient(ellipse at 50% 100%,#ebead6,#d5debe); }
+    .heart { position: absolute; right: 7px; top: 5px; border: 0; padding: 0; background: transparent; width: 27px; height: 27px; color: #516357; font-size: 25px; line-height: 1; }
+    .product-info { padding: 9px 9px 10px; }
+    .product-name { font-weight: 800; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-price { margin-top: 1px; font-size: 13px; font-weight: 900; }
+    .stock-pill {
+      display: inline-block;
+      margin-top: 7px;
+      border-radius: 15px;
+      padding: 3px 9px;
+      background: #d3f6bd;
+      color: #286d35;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .stock-pill.sold { background: #eee; color: #737973; }
+    .seller-mini { color: #747d76; font-size: 10px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .seller-byline { display: flex; align-items: center; gap: 6px; margin-top: 7px; min-width: 0; color: var(--muted); font-size: 9px; }
+    .seller-byline .seller-avatar { width: 23px; height: 23px; flex: 0 0 auto; font-size: 8px; }
+    .seller-byline span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .seller-byline strong { color: var(--ink); font-size: 10px; }
+    .offline-note { font-size: 10px; color: #78817b; margin: 11px 1px; }
+    .recommend-note { color: var(--muted); font-size: 10px; margin: -5px 0 8px; }
+    .farmer-rec, .saved-chat {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      padding: 9px 2px;
+      text-align: left;
+      border: 0;
+      border-top: 1px solid #edf0ec;
+      background: white;
+    }
+    .farmer-rec .farmer-avatar, .saved-chat .farmer-avatar { width: 33px; height: 33px; font-size: 17px; flex: 0 0 auto; }
+    .farmer-rec strong, .saved-chat strong { display: block; font-size: 11px; }
+    .farmer-rec small, .saved-chat small { display: block; color: var(--muted); font-size: 10px; }
+    .farmer-rec .go, .saved-chat .go { margin-left: auto; color: var(--green); font-size: 19px; }
+    .message-recommendations { margin-top: 20px; padding: 13px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-muted); }
+    .message-recommendations .section-title { margin: 0 0 2px; }
+    .message-recommendations .section-title h2 { font-size: 16px; }
+    #messagesScreen .back-row, #messagesScreen .recommend-note, #messagesScreen .saved-chat { font-weight: 700; }
+    #messagesScreen .saved-chat strong { font-weight: 800; }
+    #messagesScreen .saved-chat small { font-weight: 600; }
+    .profile-help-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 2px; border: 0; border-top: 1px solid #e1e9e1; background: #fff; color: #294430; text-align: left; font-size: 15px; font-weight: 750; }
+    .profile-help-row > span:first-child { width: 34px; font-size: 23px; text-align: center; }
+    .profile-help-row > span:last-child { margin-left: auto; color: #648069; font-size: 22px; }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      z-index: 4;
+      width: min(100%,430px);
+      height: 68px;
+      padding: 7px 11px max(7px,env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: space-around;
+      background: #fffffff2;
+      border-top: 1px solid #e9ede8;
+      backdrop-filter: blur(12px);
+    }
+    .bottom-nav button {
+      min-width: 56px;
+      border: 0;
+      padding: 2px 6px;
+      background: transparent;
+      color: #737c75;
+      font-size: 9px;
+    }
+    .bottom-nav button[hidden] { display: none; }
+    .bottom-nav button span { display: block; font-size: 20px; line-height: 1.1; margin-bottom: 2px; }
+    .bottom-nav button.active { color: var(--green); font-weight: 800; }
+    .back-row { display: flex; align-items: center; gap: 8px; padding: 9px 0 12px; font-size: 17px; font-weight: 800; }
+    .back { border: 0; background: transparent; padding: 0; font-size: 27px; line-height: 1; }
+    .detail-photo {
+      height: 225px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      border-radius: 18px;
+      margin: 0 -18px 14px;
+      font-size: 124px;
+      background: radial-gradient(ellipse at center,#fbf3dd,#c84d31);
+    }
+    .detail-photo .back, .detail-photo .heart { position: absolute; top: 14px; display: grid; place-items: center; width: 39px; height: 39px; border-radius: 50%; background: #ffffffd9; }
+    .detail-photo .back { left: 13px; }
+    .detail-photo .heart { right: 13px; font-size: 25px; background: transparent; border-radius: 0; }
+    .detail-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .detail-head h1 { margin: 0; font-size: 25px; letter-spacing: -.7px; }
+    .detail-price { font-size: 23px; font-weight: 900; white-space: nowrap; }
+    .review { margin: 5px 0 12px; font-size: 12px; }
+    .stars { color: #eabb3e; font-size: 18px; vertical-align: -2px; }
+    .availability-badge { display: inline-block; padding: 7px 15px; border-radius: 22px; background: #d2f3be; color: #286e38; font-size: 12px; font-weight: 800; }
+    .farmer-box { margin-top: 17px; padding: 14px; border-radius: 13px; background: #f7f9f5; font-size: 12px; }
+    .farmer-row { display: flex; align-items: center; gap: 9px; font-weight: 800; margin-bottom: 8px; }
+    .farmer-avatar { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #d9e7d4; font-size: 21px; }
+    .verified { color: var(--green); font-size: 11px; }
+    .farmer-data { color: #59645d; margin: 3px 0; }
+    .srp-box { text-align: center; border-radius: 14px; padding: 12px; background: #a9e3fb; font-weight: 800; margin-top: 13px; }
+    .purchase-row { display: flex; gap: 9px; margin-top: 15px; }
+    .quantity { display: flex; align-items: center; border: 1px solid #dce4dc; border-radius: 10px; }
+    .quantity button { border: 0; background: transparent; padding: 8px 12px; font-size: 19px; }
+    .quantity strong { min-width: 20px; text-align: center; }
+    .primary {
+      border: 0;
+      border-radius: 11px;
+      padding: 11px 15px;
+      background: #49bd57;
+      color: #fff;
+      font-weight: 850;
+      box-shadow: 0 3px 8px #48b4542b;
+    }
+    .primary:active { transform: translateY(1px); }
+    .primary.full { flex: 1; }
+    .outline {
+      border: 1px solid #dbe3da;
+      border-radius: 11px;
+      padding: 10px 13px;
+      color: var(--deep);
+      background: white;
+      font-weight: 750;
+    }
+    .outline.full { width: 100%; }
+    .field-label { display: block; margin: 10px 0 5px; color: var(--text-green); font-size: 12px; font-weight: 750; }
+    .field-input { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 9px; padding: 10px; background: #fff; color: var(--ink); font: inherit; }
+    .form-row { display: flex; gap: 9px; align-items: end; margin-top: 10px; }
+    .form-row > button { flex: 1; }
+    .form-row > div { flex: 1; min-width: 0; }
+    .chat-header { display: flex; align-items: center; gap: 11px; padding: 8px 0 14px; border-bottom: 1px solid var(--line); }
+    .chat-person { flex: 1; }
+    .chat-person strong { display: block; font-size: 16px; }
+    .online-label { color: #33824b; font-size: 11px; }
+    .chat-messages { min-height: 290px; padding: 18px 0 10px; display: flex; flex-direction: column; gap: 12px; }
+    .bubble { max-width: 83%; padding: 10px 12px 7px; border-radius: 15px; font-size: 13px; }
+    .bubble small { display: block; text-align: right; font-size: 9px; color: #68736c; margin-top: 4px; }
+    .bubble.mine { align-self: flex-end; background: #b7e9a1; border-bottom-right-radius: 4px; }
+    .bubble.theirs { align-self: flex-start; background: #ededed; border-bottom-left-radius: 4px; }
+    .chat-compose { display: flex; gap: 7px; margin-top: 4px; }
+    .chat-compose input { flex: 1; min-width: 0; border: 1px solid #cfd7d0; border-radius: 20px; padding: 10px 13px; outline: 0; }
+    .send {
+      width: 42px;
+      height: 42px;
+      border: 1px solid #16834e;
+      border-radius: 50%;
+      color: #16834e;
+      background: white;
+      font-size: 19px;
+    }
+    .offline-card { display: flex; align-items: center; gap: 12px; background: #f5d36a; padding: 13px; border-radius: 14px; margin-top: 18px; }
+    .offline-symbol { font-size: 34px; }
+    .offline-card strong { display: block; }
+    .offline-card span { font-size: 11px; }
+    .seller-header { display: flex; align-items: center; gap: 11px; margin: 7px 0 16px; }
+    .seller-header .farmer-avatar { width: 60px; height: 60px; font-size: 32px; }
+    .seller-header strong { display: block; font-size: 17px; }
+    .seller-header span { color: var(--green); font-size: 12px; font-weight: 750; }
+    .seller-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0 0 18px; }
+    .seller-stat { min-width: 0; padding: 11px 9px; border: 1px solid #ded9cb; border-radius: 12px; background: #e9ebdf; }
+    .seller-stat span { display: block; color: var(--muted); font-size: 10px; line-height: 1.25; }
+    .seller-stat strong { display: block; margin-top: 4px; color: var(--text-green); font-size: 19px; line-height: 1.1; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; margin-top: 8px; }
+    .dashboard-tile { min-height: 87px; border: 0; border-radius: 13px; background: #55d298; color: #103c2b; padding: 9px 4px; font-weight: 700; }
+    .dashboard-tile span { display: block; font-size: 27px; }
+    .dashboard-tile.wide { grid-column: 1/-1; min-height: 67px; display: flex; align-items: center; justify-content: center; gap: 13px; font-size: 16px; }
+    .order-row { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border: 1px solid var(--line); border-radius: 12px; margin-top: 7px; background: #faf8f0; }
+    .order-filter-tabs { display: flex; gap: 18px; overflow-x: auto; margin: 0 -2px 12px; border-bottom: 1px solid var(--line); }
+    .order-filter-tab { flex: 0 0 auto; border: 0; border-bottom: 2px solid transparent; padding: 10px 2px; background: transparent; color: var(--muted); font-weight: 700; }
+    .order-filter-tab.active { border-bottom-color: var(--brand-700); color: var(--brand-700); }
+    .order-open { width: 100%; color: var(--ink); text-align: left; font: inherit; cursor: pointer; }
+    .order-thumb { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 50%; background: #f1e8d0; font-size: 25px; }
+    .order-copy { flex: 1; }
+    .order-copy strong { display: block; font-size: 12px; }
+    .order-copy span { color: var(--muted); font-size: 10px; }
+    .status-tag { background: #d9f3c7; color: #31653a; border-radius: 15px; padding: 4px 8px; font-size: 10px; font-weight: 800; }
+    .inventory-item { display: flex; gap: 11px; align-items: center; border-bottom: 1px solid #e3ded1; padding: 12px 0; }
+    .inventory-item .product-image { width: 75px; height: 70px; border-radius: 11px; flex: 0 0 auto; font-size: 39px; }
+    .inventory-details { flex: 1; min-width: 0; }
+    .inventory-details strong { display: block; }
+    .inventory-details small { color: var(--muted); }
+    .stock-controls { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
+    .stock-controls button { border: 1px solid #d9d4c7; background: #faf8f0; border-radius: 8px; padding: 4px 9px; font-weight: 800; }
+    .availability-select { border: 1px solid #ddd8c9; border-radius: 10px; background: #e9ebdf; padding: 10px; width: 100%; margin-top: 14px; font-weight: 750; }
+    .sync-card { padding: 13px; border-radius: 14px; background: #f3d16f; margin-top: 16px; display: flex; align-items: center; gap: 10px; }
+    .sync-card strong { display: block; }
+    .sync-card small { color: #55471e; }
+    .section-card { background: #faf8f0; border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-top: 12px; }
+    .section-card h3 { font-size: 14px; margin: 0 0 10px; }
+    .delivery-map {
+      height: 150px;
+      border-radius: 13px;
+      position: relative;
+      overflow: hidden;
+      background: repeating-linear-gradient(40deg,transparent 0 25px,#fff 26px 31px,transparent 32px 57px), repeating-linear-gradient(130deg,#dceec9 0 42px,#f9f4d8 43px 66px,#bfe2ee 67px 77px);
+    }
+    .delivery-map:before { display: none; }
+    .delivery-map:after { content: ""; position: absolute; left: 24%; top: 59%; width: 48%; height: 3px; background: #ef7053; transform: rotate(-25deg); }
+    .tracking-map {
+      height: 265px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #e4d7c8;
+      border-radius: 15px;
+      background:
+        linear-gradient(35deg,transparent 47%,#fffaf4 48% 52%,transparent 53%),
+        linear-gradient(135deg,transparent 43%,#fffaf4 44% 48%,transparent 49%),
+        repeating-linear-gradient(0deg,transparent 0 42px,#d8c5ae 43px 45px,transparent 46px 79px),
+        repeating-linear-gradient(90deg,#eee2d3 0 56px,#e6d4bd 57px 60px,#f5ebdf 61px 112px);
+    }
+    .driver-marker { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #fffaf4; box-shadow: 0 3px 12px #50351f44; font-size: 27px; }
+    .map-label { position: absolute; bottom: 10px; left: 10px; right: 10px; border-radius: 9px; background: #fffaf4ed; padding: 8px 10px; color: #66503a; font-size: 10px; }
+    .tracking-status { margin-top: 12px; border-radius: 12px; background: #f3eadf; padding: 12px; font-size: 12px; }
+    .tracking-status strong { display: block; color: #65472d; }
+    .tracking-status span { display: block; color: #806f61; margin-top: 3px; }
+    .tracking-code-panel { display: grid; gap: 8px; margin-top: 12px; padding: 13px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+    .tracking-code-panel strong { color: var(--ink-900); }
+    .tracking-code-value { letter-spacing: .08em; font-weight: 850; }
+    #trackingContent [hidden] { display: none !important; }
+    .tracking-demo-note { padding: 11px 12px; border-radius: 11px; background: #fff3d7; color: #70551e; font-size: 12px; line-height: 1.45; }
+    .tracking-summary { display: grid; gap: 5px; }
+    .tracking-summary strong { color: var(--text-green); }
+    .tracking-progress { margin: 16px 0 0; }
+    .tracking-step { position: relative; display: grid; grid-template-columns: 22px 1fr; gap: 10px; min-height: 60px; }
+    .tracking-step:not(:last-child)::before { content: ""; position: absolute; left: 9px; top: 20px; bottom: 0; width: 2px; background: #d7ded6; }
+    .tracking-step.done:not(:last-child)::before { background: #4a8b55; }
+    .tracking-step-dot { z-index: 1; width: 20px; height: 20px; display: grid; place-items: center; border: 2px solid #c8d0c8; border-radius: 50%; background: #fff; color: transparent; font-size: 11px; }
+    .tracking-step.done .tracking-step-dot, .tracking-step.current .tracking-step-dot { border-color: #4a8b55; background: #4a8b55; color: #fff; }
+    .tracking-step.current .tracking-step-dot { box-shadow: 0 0 0 4px #4a8b5522; }
+    .tracking-step-copy { padding: 1px 0 16px; }
+    .tracking-step-copy strong { display: block; font-size: 13px; }
+    .tracking-step-copy small { display: block; margin-top: 3px; color: var(--muted); line-height: 1.4; }
+    .delivery-note-input { display: block; width: 100%; min-height: 88px; resize: vertical; border: 1px solid var(--line); border-radius: 11px; padding: 11px 12px; background: #fff; color: var(--ink); font: inherit; line-height: 1.45; }
+    .delivery-note-input::placeholder { color: #818a82; }
+    .delivery-note-input:focus { border-color: var(--brand-700); box-shadow: 0 0 0 3px #4a8b5522; outline: 0; }
+    .delivery-option { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: white; border: 1px solid #232923; border-radius: 11px; padding: 10px 12px; margin-top: 8px; }
+    .delivery-option.selected { background: #eff8e9; border: 2px solid #58bd61; padding: 9px 11px; }
+    .delivery-option .delivery-emoji { font-size: 26px; }
+    .delivery-option strong { display: block; font-size: 12px; }
+    .delivery-option span { color: #68716b; font-size: 10px; }
+    .delivery-option b { margin-left: auto; }
+    .feature-callout { border-radius: 14px; padding: 13px; margin-top: 10px; text-align: center; background: #a9e4fa; }
+    .feature-callout strong { display: block; }
+    .hub { background: #ececec; border-radius: 13px; margin-top: 8px; padding: 12px; display: flex; gap: 8px; align-items: center; }
+    .hub span { font-size: 30px; }
+    .hub strong { display: block; }
+    .hub small { color: #5d675f; }
+    .profile-card { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; background: #eff7eb; }
+    .profile-actions { display: grid; gap: 9px; margin-top: 17px; }
+    .profile-actions button { width: 100%; text-align: left; padding: 13px; border: 1px solid #e5e9e4; border-radius: 12px; background: white; font-weight: 750; }
+    .profile-actions button span { float: right; color: var(--green); }
+    .profile-cover { margin: -10px -18px 12px; padding: 17px 18px 18px; color: #fffaf4; background: linear-gradient(135deg,#3b2416,#634329); }
+    .profile-identity { display: flex; align-items: center; gap: 11px; }
+    .profile-identity .farmer-avatar { width: 52px; height: 52px; color: #3b2416; font-size: 25px; border: 2px solid #fffaf4; }
+    .profile-identity strong { font-size: 18px; }
+    .profile-identity small { display: block; color: #e8d8c6; font-size: 12px; }
+    .profile-badge { margin-left: auto; border: 1px solid #ddc19d; border-radius: 20px; padding: 5px 9px; font-size: 10px; }
+    .profile-block { margin-top: 10px; padding: 14px; border: 1px solid #e8ded3; border-radius: 14px; background: #fff; }
+    .profile-block-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .profile-block-head h2 { margin: 0; font-size: 16px; }
+    .profile-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 3px; }
+    .profile-grid button { min-width: 0; border: 0; border-radius: 10px; padding: 8px 3px; background: transparent; color: #443426; font-size: 11px; }
+    .profile-grid button:hover, .profile-tool:hover { background: #f3ece3; }
+    .profile-grid button span { display: block; font-size: 24px; margin-bottom: 4px; }
+    .profile-grid button small { display: block; margin-top: 3px; color: #8a715c; font-size: 10px; }
+    .profile-service { display: flex; align-items: center; gap: 9px; width: 100%; border: 0; border-top: 1px solid #eee6de; padding: 11px 2px 2px; margin-top: 8px; text-align: left; background: transparent; color: #493524; font-weight: 700; font-size: 13px; }
+    .profile-service span:last-child { margin-left: auto; color: #765236; font-size: 12px; }
+    .wallet-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; }
+    .wallet-grid button { border: 0; border-radius: 10px; padding: 8px 3px; background: transparent; color: #493524; font-size: 11px; }
+    .wallet-grid button span { display: block; font-size: 23px; margin-bottom: 4px; }
+    .wallet-grid button small { display: block; margin-top: 4px; color: #866344; font-size: 10px; }
+    .profile-tools { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    .profile-tool { display: flex; align-items: center; gap: 8px; min-height: 60px; border: 1px solid #e8ded3; border-radius: 11px; padding: 9px; background: #fff; text-align: left; color: #3d2c1f; font-size: 12px; font-weight: 700; text-decoration: none; }
+    .profile-tool span { font-size: 22px; }
+    .notification-section { margin-top: 16px; }
+    .notification-section .profile-block-head { margin: 0 0 9px; }
+    .notification-card { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 9px; margin-top: 8px; border: 1px solid #dce7dd; border-radius: 12px; background: #fff; color: var(--ink); text-align: left; }
+    .notification-card strong { display: block; font-size: 13px; }
+    .notification-card small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .notification-icon { width: 35px; height: 35px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 9px; background: #e4efe3; color: #1d5b35; font-size: 18px; }
+    .notification-arrow { margin-left: auto; color: var(--green); }
+    .update-category-row { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; padding: 8px 0; border-bottom: 1px solid #dce7dd; }
+    .update-category { border: 0; padding: 7px 2px; background: transparent; color: #617166; font-size: 10px; }
+    .update-category span { display: block; margin-bottom: 4px; color: var(--green); font-size: 20px; }
+    .update-category.active { color: var(--green); font-weight: 800; border-bottom: 2px solid var(--green); }
+    .catalog-date { font-size: 11px; color: #6c756e; text-align: center; margin: 6px 0 12px; }
+    .catalog-row { display: flex; align-items: center; gap: 10px; border: 1.5px solid #202620; border-radius: 12px; padding: 7px; margin-top: 8px; }
+    .catalog-row .product-image { width: 82px; height: 76px; border-radius: 8px; flex: 0 0 auto; font-size: 42px; }
+    .catalog-row .product-info { flex: 1; padding: 4px; }
+    .download { color: #149149; border: 0; background: transparent; font-size: 23px; padding: 8px; }
+    .reply-box { border: 1px solid #e4e9e3; border-radius: 12px; padding: 12px; margin-top: 13px; background: #fafbf9; }
+    .reply-box p { color: var(--muted); font-size: 11px; margin: 4px 0 9px; }
+    .reply-box input, .reply-box select { width: 100%; border: 1px solid #dce3db; border-radius: 9px; padding: 9px; margin-top: 7px; background: white; }
+    .reply-box button { margin-top: 8px; width: 100%; }
+    .auth-screen { width: 100%; max-width: 430px; margin: 0 auto; padding: 12px 23px 26px; min-height: calc(100vh - 101px); display: flex; flex-direction: column; justify-content: center; }
+    .auth-art {
+      position: relative; height: 233px; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; overflow: hidden; margin: 2px -23px 20px; color: white; text-align: center;
+      background: linear-gradient(180deg,#c7f5de 0 29%,#8cce76 29% 56%,#f2dc7e 56% 69%,#4c9850 69%);
+    }
+    .auth-art:before, .auth-art:after { display: none; }
+    .auth-leaf { display: block; width: 110px; height: 100px; filter: drop-shadow(0 4px 5px #174c2833); z-index: 1; }
+    .welcome-landscape { position: absolute; z-index: 0; left: 0; bottom: 0; width: 100%; height: 52%; }
+    .auth-logo { font-size: 39px; font-weight: 950; color: #39bd55; text-shadow: 0 4px 11px #1f763977; line-height: 1.1; z-index: 1; }
+    .auth-tagline { font-size: 12px; z-index: 1; color: #173c26; font-weight: 750; }
+    .auth-footer { position: absolute; z-index: 1; bottom: 10px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); padding: 6px 12px; border-radius: 20px; background: #ffffff66; color: #fff; font-size: 10px; }
+    .auth-screen.welcome-stage .auth-logo { color: #43bd57; text-shadow: 0 4px 12px #1f763955; }
+    .auth-screen.account-stage .auth-art, .auth-screen.role-stage .auth-art { height: 175px; margin-bottom: 12px; background: #fff; color: var(--deep); }
+    .auth-screen.account-stage .auth-leaf, .auth-screen.role-stage .auth-leaf { width: 72px; height: 64px; }
+    .auth-screen.account-stage .auth-logo, .auth-screen.role-stage .auth-logo { color: #43bd57; font-size: 30px; }
+    .auth-screen.account-stage .auth-footer, .auth-screen.role-stage .auth-footer { display: none; }
+    .auth-screen h1 { font-size: 22px; margin: 0 0 4px; }
+    .auth-screen p { margin: 0 0 16px; color: #59645d; font-size: 13px; }
+    .auth-tabs { display: flex; gap: 6px; margin: 15px 0 19px; }
+    .auth-tabs button { flex: 1; border: 0; border-radius: 20px; padding: 8px; color: white; background: #aaa; font-weight: 800; }
+    .auth-tabs button.active { background: #68d34f; color: #132d1a; }
+    .auth-error { margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; background: var(--brand-100); color: var(--brand-900); font-size: 13px; }
+    .auth-error[hidden], .auth-resend[hidden] { display: none; }
+    .auth-resend { display: block; width: 100%; margin: 0 0 8px; }
+    .field { display: block; margin-top: 13px; font-size: 12px; font-weight: 650; }
+    .field input { display: block; width: 100%; margin-top: 7px; border: 0; background: #eee; padding: 12px; outline: 0; }
+    .auth-submit { width: 90%; display: block; margin: 22px auto 10px; }
+    .auth-foot { text-align: center; font-size: 12px; }
+    .role-choice { width: 100%; display: flex; align-items: center; gap: 12px; border: 0; border-radius: 13px; background: #0cbd70; padding: 12px; margin-top: 12px; text-align: left; color: white; font-size: 16px; font-weight: 800; }
+    .role-choice.buyer { background: #c9f8e8; color: #13241b; }
+    .role-choice .role-icon { font-size: 45px; }
+    .role-choice .arrow { margin-left: auto; font-size: 28px; }
+    .notice { margin-top: 13px; border-radius: 12px; background: #f0f7eb; color: #48604d; padding: 11px; font-size: 11px; }
+    .toast { position: fixed; z-index: 9; bottom: 82px; left: 50%; transform: translate(-50%,15px); opacity: 0; pointer-events: none; background: #183e2b; color: white; border-radius: 11px; padding: 10px 15px; font-size: 12px; width: max-content; max-width: calc(100vw - 32px); transition: .2s; box-shadow: var(--shadow); }
+    .toast.show { transform: translate(-50%,0); opacity: 1; }
+    .empty { color: var(--muted); font-size: 12px; text-align: center; border: 1px dashed #dfe5dc; border-radius: 12px; padding: 24px; }
+    body { background: var(--sky); }
+    .app { background: #fbfdfb; }
+    .topbar { background: linear-gradient(180deg,var(--pale),#fbfdfb); }
+    .brand { color: var(--text-green); text-shadow: 0 3px 10px #1d5b3533; font-family: var(--font-heading); }
+    .brand-leaf, .auth-logo { color: #16482a; }
+    .auth-logo { text-shadow: 0 4px 11px #16482a33; font-family: var(--font-heading); }
+    .icon-button:hover { background: #e6f0e6; }
+    .offline-toggle .signal, .online-label, .verified, .download { color: #1c5a34; }
+    .offline .offline-toggle { color: #17462a; background: #e5efe5; border-color: #bed4c1; }
+    .offline-banner { background: #e6f0e3; color: #244b2c; }
+    .searchbox { border-color: #d5cfbf; background: #f8f6ee; }
+    .landscape {
+      background:
+        radial-gradient(ellipse at 87% 24%, #fff8 0 8%, transparent 8.5%),
+        linear-gradient(180deg,#d9eee1 0 38%, transparent 38%),
+        linear-gradient(166deg,transparent 0 42%,#8fb48b 42% 60%,transparent 60%),
+        linear-gradient(11deg,#c6d9a1 0 28%,#7eaa70 28% 42%,#315f39 42% 55%,#d8e6bf 55% 100%);
+    }
+    .landscape:before { background: repeating-linear-gradient(169deg,#64874e 0 7px,#a8c27d 7px 14px); }
+    .landscape:after { background: #214a2d; }
+    .chip, .product-card, .profile-actions button { border-color: #dcd7c9; }
+    .chip { background: #f7f4eb; }
+    .product-card { background: #faf8f0; }
+    .chip.active { background: #dcebdd; border-color: #a9c7ae; color: var(--deep); }
+    #productGrid .product-image, #cachedProducts .product-image, #inventoryRows .product-image {
+      background: radial-gradient(ellipse at 50% 100%,#e6f0e0,#b8d1b2);
+    }
+    .stock-pill, .availability-badge, .status-tag { background: #dcebdd; color: #245433; }
+    .stock-pill.sold { background: #e7ebe7; color: #5f6b61; }
+    .farmer-avatar { background: #dcebdd; }
+    .detail-photo { background: radial-gradient(ellipse at center,#e8f1e2,#aac9a7); }
+    .farmer-box, .profile-card, .notice { background: #f0f6ef; }
+    .srp-box, .feature-callout { background: #dcebdd; color: #203d27; }
+    .quantity { border-color: #d1dfd2; }
+    .primary { background: var(--deep); box-shadow: 0 3px 8px #103b2433; }
+    .primary:hover { background: var(--text-green); }
+    .outline, .delivery-option { border-color: #cbd9cc; }
+    .bubble.mine { background: #d7ead8; }
+    .bubble.theirs { background: #edf1ed; }
+    .send { border-color: #1d5b35; color: #1d5b35; }
+    .offline-card, .sync-card { background: #e2eddf; }
+    .sales-card, .dashboard-tile { background: linear-gradient(120deg,#347749,#174b2d); color: #f7fff7; }
+    .bars i { background: #103b24; }
+    .order-thumb { background: #e9ebdf; }
+    .availability-select { background: #eaf2e9; color: #294430; }
+    .delivery-map {
+      background: repeating-linear-gradient(40deg,transparent 0 25px,#fbfdfb 26px 31px,transparent 32px 57px), repeating-linear-gradient(130deg,#cfdfc8 0 42px,#eef4e8 43px 66px,#b9d1b6 67px 77px);
+    }
+    .delivery-map:after { background: #3d7445; }
+    .delivery-option.selected { background: #e5f0e4; border-color: #407c4b; }
+    .hub { background: #e8f0e5; }
+    .auth-art { background: linear-gradient(180deg,#ebe9dd 0 29%,#9bb18d 29% 56%,#d7d8b8 56% 69%,#315f39 69%); }
+    .auth-art:before { color: #214a2d; }
+    .auth-tabs button.active { background: #1d5b35; color: #fff; }
+    .role-choice { background: #174b2d; }
+    .role-choice.buyer { background: #dcebdd; color: #203d27; }
+    .toast { background: #103b24; }
+    .empty { border-color: #cbd9cc; }
+    .profile-cover { background: linear-gradient(135deg,#103b24,#1d5b35); }
+    .profile-identity .farmer-avatar { color: #103b24; }
+    .profile-identity small { color: #d9ead9; }
+    .profile-badge { border-color: #aacbaa; }
+    .profile-block { border-color: #dce7dd; }
+    .profile-grid button { color: #294430; }
+    .profile-grid button:hover, .profile-tool:hover { background: #eaf2e9; }
+    .profile-grid button small, .wallet-grid button small { color: #56775a; }
+    .profile-service { border-color: #e1e9e1; color: #294430; }
+    .profile-service span:last-child, .wallet-grid button { color: #315f39; }
+    .profile-tool { border-color: #dce7dd; color: #294430; }
+    .icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .icon { width: 21px; height: 21px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+    body { background: var(--sand-50); color: var(--ink-900); }
+    .app { background: var(--sand-50); box-shadow: 0 0 50px rgb(23 59 42 / 10%); }
+    .topbar { background: var(--sand-50); border-bottom: 1px solid var(--border); }
+    .brand { color: var(--brand-900); font-family: var(--font-heading); font-size: 21px; text-shadow: none; }
+    .brand-leaf { width: 31px; height: 29px; }
+    .auth-logo, .auth-screen.welcome-stage .auth-logo { text-shadow: none; }
+    .screen h1, .screen h2, .section-title h2, .back-row, .product-name { color: var(--ink-900); font-family: var(--font-body); }
+    .content { padding-bottom: 22px; }
+    .icon-button, .home-quick-button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 14px; color: var(--brand-900); }
+    .offline-toggle { min-height: 40px; border-radius: 999px; padding: 0 12px; color: var(--brand-900); background: var(--brand-100); border-color: #c8dcca; }
+    .offline-toggle .signal { width: 17px; height: 17px; color: var(--brand-700); }
+    .offline .offline-toggle { background: #fff3d7; color: #704d0b; border-color: #ead9a9; }
+    .searchbox { min-height: 48px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); padding: 0 11px; }
+    .searchbox > .icon { color: var(--ink-600); }
+    .searchbox input { min-width: 0; font-size: 16px; }
+    .search-camera { display: grid; place-items: center; width: 44px; height: 44px; color: var(--brand-700); }
+    .home-quick-button { position: relative; border: 1px solid var(--border); background: var(--surface); }
+    .home-quick-button .icon { width: 21px; height: 21px; }
+    .landscape { border-radius: 22px; box-shadow: var(--shadow-card); }
+    .landscape-copy strong { font-family: var(--font-heading); }
+    .basket-art { width: 100px; height: 84px; filter: drop-shadow(0 5px 5px rgb(24 43 23 / 18%)); }
+    .category-row { gap: 8px; padding: 2px 0 5px; }
+    .chip { min-height: 44px; border-radius: 999px; padding: 0 15px; background: var(--surface); border-color: var(--border); color: var(--ink-600); font-size: 14px; }
+    .chip.active { background: var(--brand-100); color: var(--brand-900); border-color: #bfd4c1; }
+    .product-card { border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--shadow-card); }
+    .product-image { position: relative; overflow: hidden; background: linear-gradient(145deg,#edf2e8,#dce8d7); }
+    .produce-art { display: block; width: 100%; height: 100%; min-height: 100px; }
+    .product-card .product-image { min-height: 108px; }
+    .product-info { padding: 10px 11px 12px; }
+    .product-name { font-size: 15px; line-height: 1.25; font-weight: 800; }
+    .product-title { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: var(--ink-900); text-align: left; font-size: 15px; line-height: 1.25; font-weight: 800; }
+    .product-image > .product-open { position: absolute; inset: 0; display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; }
+    .product-image > .product-open .produce-art { width: 100%; height: 100%; }
+    .product-image > .heart { z-index: 1; }
+    .product-price { margin-top: 5px; color: var(--brand-900); font-size: 16px; font-weight: 900; }
+    .stock-pill, .availability-badge, .status-tag { border-radius: 999px; font-size: 12px; font-weight: 800; }
+    .seller-byline { align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 12px; line-height: 1.35; }
+    .seller-byline .seller-avatar { width: 30px; height: 30px; font-size: 10px; }
+    .seller-byline span:last-child { white-space: normal; overflow-wrap: anywhere; }
+    .seller-byline strong { display: inline-block; font-size: 12px; line-height: 1.3; }
+    .farmer-avatar { color: var(--brand-900); font-size: 13px; font-weight: 900; }
+    .bottom-nav { min-height: calc(70px + env(safe-area-inset-bottom)); height: auto; padding: 6px 5px calc(6px + env(safe-area-inset-bottom)); background: rgb(255 254 250 / 96%); border-top: 1px solid var(--border); box-shadow: 0 -7px 22px rgb(26 49 32 / 5%); backdrop-filter: blur(14px); }
+    .bottom-nav button { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; min-width: 44px; min-height: 48px; padding: 5px 2px; color: var(--ink-600); font-size: 11px; font-weight: 700; }
+    .bottom-nav button .icon { width: 21px; height: 21px; }
+    .bottom-nav button > span { display: block; margin: 0; font-size: 11px; line-height: 1.1; }
+    .bottom-nav button.active { color: var(--brand-900); font-weight: 900; }
+    .bottom-nav button.active:before { content: ""; position: absolute; z-index: -1; width: 48px; height: 30px; top: 3px; border-radius: 999px; background: var(--brand-100); }
+    .toast { bottom: calc(78px + env(safe-area-inset-bottom)); font-size: 14px; }
+    .empty { border: 0; border-radius: var(--radius-card); background: var(--surface-muted); color: var(--ink-600); font-size: 14px; }
+    .notification-card { min-height: 68px; border-color: var(--border); border-radius: 15px; box-shadow: 0 2px 8px rgb(26 49 32 / 4%); }
+    .notification-card strong { font-size: 15px; }
+    .notification-card small { color: var(--ink-600); font-size: 13px; line-height: 1.35; }
+    .notification-icon { width: 42px; height: 42px; border-radius: 13px; }
+    .profile-block { border-color: var(--border); border-radius: var(--radius-card); background: var(--surface-muted); box-shadow: var(--shadow-card); }
+    .profile-block-head h2 { font-size: 18px; }
+    .profile-grid button, .wallet-grid button { min-height: 58px; font-size: 12px; }
+    .profile-grid button small, .wallet-grid button small { font-size: 12px; }
+    .profile-tool { min-height: 64px; border-radius: 14px; background: var(--surface-muted); font-size: 14px; }
+    #profileContent .profile-block-head > span { color: var(--ink-600) !important; font-size: 13px !important; }
+    .profile-cover { border-radius: 0 0 20px 20px; }
+    .auth-screen { justify-content: flex-start; overflow-y: auto; padding-top: 12px; }
+    .auth-art { border-radius: 0 0 22px 22px; }
+    .auth-screen.account-stage .auth-art, .auth-screen.role-stage .auth-art { background: transparent; }
+    .auth-screen.account-stage .auth-logo, .auth-screen.role-stage .auth-logo { color: var(--brand-900); }
+    .auth-tabs { padding: 4px; border-radius: 999px; background: var(--sand-100); }
+    .auth-tabs button { min-height: 44px; color: var(--ink-600); background: transparent; }
+    .auth-tabs button.active { background: var(--brand-900); color: #fff; box-shadow: 0 3px 8px rgb(23 59 42 / 17%); }
+    .field { font-size: 14px; color: var(--ink-900); }
+    .field input, .reply-box input, .reply-box select { min-height: 48px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); padding: 11px 13px; font-size: 16px; color: var(--ink-900); }
+    .auth-submit { width: 100%; min-height: 50px; border-radius: 999px; }
+    .auth-foot { margin-top: 10px; font-size: 14px; color: var(--ink-600); }
+    .role-choice { min-height: 92px; border-radius: var(--radius-card); padding: 15px; }
+    .role-choice small { font-size: 13px; font-weight: 600; opacity: .88; }
+    button, input, select, textarea { transition: color .18s ease-out, background-color .18s ease-out, border-color .18s ease-out, box-shadow .18s ease-out, transform .18s ease-out; }
+    button:active { transform: scale(.98); }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #6b9f70; outline-offset: 2px; }
+    .primary { min-height: 44px; border-radius: 14px; background: var(--brand-900); }
+    .outline { min-height: 44px; border-radius: 14px; color: var(--brand-900); border-color: #cdd9ce; }
+    .offline-note, .recommend-note, .catalog-date { color: var(--ink-600); font-size: 13px; }
+    .chat-compose input { min-width: 0; min-height: 46px; border-radius: 999px; font-size: 16px; }
+    .send { width: 46px; height: 46px; border-radius: 50%; }
+    .role-switch { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0 2px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; color: var(--ink-600); font-size: 14px; }
+    .role-switch button { min-height: 40px; border: 0; border-radius: 999px; padding: 0 14px; background: var(--brand-100); color: var(--brand-900); font-weight: 800; }
+    .accent-icon { color: var(--sun-500); }
+    .heart { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgb(255 254 250 / 94%); color: var(--brand-900); }
+    .heart .icon { width: 20px; height: 20px; }
+    .heart.saved { color: var(--berry-500); }
+    .heart.saved .icon { fill: currentColor; }
+    .product-card .product-image .heart { right: 9px; top: 9px; }
+    .farmer-rec, .saved-chat { min-height: 64px; border-color: var(--border); border-radius: 15px; background: var(--surface); }
+    .farmer-rec .farmer-avatar, .saved-chat .farmer-avatar { width: 42px; height: 42px; font-size: 12px; }
+    .farmer-rec strong, .saved-chat strong { font-size: 14px; }
+    .farmer-rec small, .saved-chat small { margin-top: 3px; font-size: 12px; line-height: 1.3; }
+    .farmer-rec .go, .saved-chat .go { width: 18px; height: 18px; }
+    .seller-stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .seller-stat { border-color: var(--border); border-radius: 15px; background: var(--surface); }
+    .seller-stat span { font-size: 13px; }
+    .seller-stat strong { font-size: 20px; }
+    .order-row { min-height: 64px; border-color: var(--border); }
+    .order-thumb { width: 48px; height: 48px; flex: 0 0 48px; overflow: hidden; border-radius: 14px; }
+    .order-thumb .produce-art { min-height: 0; }
+    .availability-select { min-height: 44px; border-radius: 12px; font-size: 14px; }
+    .delivery-option { min-height: 62px; border-radius: 15px; background: var(--surface); }
+    .delivery-option .delivery-emoji { width: 26px; height: 26px; font-size: initial; color: var(--brand-700); }
+    .delivery-map:before { content: ""; }
+    .map-pin { position: absolute; z-index: 1; left: 62%; top: 25%; color: var(--berry-500); }
+    .map-pin .icon { width: 31px; height: 31px; fill: var(--surface); }
+    .feature-callout { display: grid; justify-items: center; gap: 5px; background: var(--brand-100); color: var(--brand-900); }
+    .feature-callout .icon { width: 28px; height: 28px; }
+    .hub { border: 1px solid var(--border); border-radius: 15px; background: var(--surface); }
+    .hub > .icon { width: 27px; height: 27px; color: var(--brand-700); }
+    .profile-grid button > span .icon, .wallet-grid button > span .icon { width: 23px; height: 23px; }
+    .profile-tool > .icon { width: 23px; height: 23px; color: var(--brand-700); }
+    .payment-mark { display: inline-grid; place-items: center; width: 23px; height: 23px; margin: 0 auto; border-radius: 7px; background: var(--brand-100); color: var(--brand-900); font-size: 14px !important; font-weight: 900; }
+    .update-category { min-height: 54px; font-size: 12px; }
+    .update-category span { display: grid; place-items: center; height: 25px; margin-bottom: 4px; }
+    .update-category span .icon { width: 19px; height: 19px; }
+    .notification-icon .icon { width: 21px; height: 21px; }
+    .empty-state { display: grid; justify-items: center; gap: 7px; padding: 24px 18px; border-radius: var(--radius-card); background: var(--surface-muted); color: var(--ink-600); text-align: center; }
+    .empty-state > strong { color: var(--ink-900); font-size: 16px; }
+    .empty-state p { max-width: 290px; margin: 0; font-size: 14px; }
+    .empty-illustration { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 2px; border-radius: 18px; background: var(--brand-100); color: var(--brand-700); }
+    .empty-illustration .icon { width: 27px; height: 27px; }
+    #inventoryContent > .empty-state + .section-title { margin-top: 20px; }
+    #ordersContent > .empty-state + button { margin-top: 16px; }
+    .detail-photo .produce-art { width: 180px; height: 180px; min-height: 0; }
+    .farmer-box .farmer-row > span:last-child > span:last-child { color: var(--ink-600); }
+    .auth-password-field { position: relative; }
+    .auth-password-field input { padding-right: 68px; }
+    .auth-password-field button { position: absolute; top: 50%; right: 8px; min-width: 50px; min-height: 38px; transform: translateY(-50%); border: 0; border-radius: 9px; background: var(--brand-100); color: var(--brand-900); font-size: 13px; font-weight: 800; }
+    .quantity button, .cart-quantity button { min-width: 44px; min-height: 44px; }
+    .purchase-row { flex-wrap: wrap; }
+    .purchase-actions { display: flex; flex: 1 1 100%; gap: 9px; }
+    .purchase-actions > button { flex: 1; min-height: 48px; }
+    .purchase-actions .primary { border-radius: 999px; }
+    .purchase-actions .outline { border-radius: 999px; }
+    #detailScreen .content { padding: 0 0 18px; background: var(--surface); }
+    .detail-photo { height: min(58vw, 320px); min-height: 245px; margin: 0; border-radius: 0; background: linear-gradient(145deg,#f4f7f1,#e8eee4); }
+    .detail-photo .produce-art { width: min(74vw, 290px); height: min(74vw, 290px); }
+    .detail-photo .back, .detail-photo .heart { top: 14px; z-index: 1; box-shadow: 0 2px 10px rgb(22 43 27 / 12%); }
+    .detail-photo .back { left: 16px; }
+    .detail-photo .heart { right: 16px; background: #fff; }
+    .detail-image-count { position: absolute; right: 15px; bottom: 13px; padding: 5px 10px; border-radius: 999px; background: rgb(25 37 28 / 70%); color: #fff; font-size: 12px; font-weight: 800; }
+    .detail-body { padding: 14px 18px 0; }
+    .detail-seller { display: flex; align-items: center; gap: 10px; min-height: 53px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .detail-seller .farmer-avatar { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%; }
+    .detail-seller-copy { flex: 1; min-width: 0; }
+    .detail-seller-copy strong, .detail-seller-copy small { display: block; }
+    .detail-seller-copy strong { font-size: 14px; }
+    .detail-seller-copy small { margin-top: 2px; color: var(--ink-600); font-size: 12px; }
+    .detail-seller .verified { margin-left: 3px; white-space: nowrap; }
+    .detail-price-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 15px; }
+    .detail-price { color: var(--berry-500); font-size: 26px; line-height: 1.15; font-weight: 900; }
+    .detail-price small { color: var(--ink-600); font-size: 13px; font-weight: 700; }
+    .detail-stock-count { color: var(--ink-600); font-size: 12px; white-space: nowrap; }
+    .detail-head { display: block; margin-top: 7px; }
+    .detail-head h1 { font-size: 21px; line-height: 1.3; letter-spacing: -.3px; }
+    .detail-review-row { display: flex; align-items: center; gap: 7px; margin: 8px 0 12px; color: var(--ink-600); font-size: 13px; }
+    .detail-review-row .stars { font-size: 17px; }
+    .detail-review-row .review-separator { color: #a0aaa2; }
+    .detail-availability { display: flex; align-items: center; gap: 8px; padding: 11px 12px; border-radius: 13px; background: var(--surface-muted); color: var(--ink-900); font-size: 14px; font-weight: 800; }
+    .detail-availability .icon { width: 19px; height: 19px; color: var(--brand-700); }
+    .detail-availability.sold { color: var(--berry-500); }
+    .detail-meta { display: grid; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .detail-meta-row { display: flex; align-items: center; gap: 9px; color: var(--ink-600); font-size: 13px; }
+    .detail-meta-row .icon { width: 19px; height: 19px; color: var(--brand-700); }
+    .srp-box { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); color: var(--ink-600); font-size: 13px; font-weight: 700; }
+    .srp-box strong { color: var(--ink-900); font-size: 14px; }
+    .detail-quantity-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+    .detail-quantity-row > span { color: var(--ink-600); font-size: 14px; font-weight: 750; }
+    .detail-buybar { position: sticky; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 8px; margin: 14px 0 0; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: rgb(255 255 255 / 97%); box-shadow: 0 -5px 16px rgb(26 49 32 / 6%); }
+    .detail-buybar .detail-quick-action { display: grid; justify-items: center; align-content: center; gap: 2px; flex: 0 0 52px; min-height: 48px; padding: 3px 0; border: 0; background: transparent; color: var(--brand-900); font-size: 10px; font-weight: 800; }
+    .detail-buybar .detail-quick-action .icon { width: 21px; height: 21px; }
+    .detail-buybar #buyNow { flex: 1; min-height: 48px; padding: 7px 12px; border-radius: 13px; font-size: 15px; }
+    .detail-buybar button:disabled { cursor: not-allowed; opacity: .48; }
+    .detail-offline-note { margin: 10px 0 0; color: var(--ink-600); font-size: 12px; line-height: 1.4; }
+    .role-choice .role-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: rgb(255 255 255 / 14%); }
+    .role-choice .role-icon .icon { width: 28px; height: 28px; }
+    .role-choice.buyer .role-icon { background: rgb(36 92 59 / 9%); }
+    .role-choice .arrow { width: 21px; height: 21px; }
+    .splash-screen + .screen .landscape-copy { max-width: 70%; }
+    @media (max-width: 380px) {
+      .bottom-nav button { font-size: 10px; }
+      .product-info { padding: 8px; }
+      .product-name, .product-title { font-size: 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+    @media (min-width: 650px) {
+      body { min-height: 100vh; padding: 25px 0; display: grid; place-items: center; }
+      .app { height: min(850px,calc(100vh - 50px)); min-height: min(700px,calc(100vh - 50px)); border: 10px solid #181b19; border-radius: 46px; }
+      .app.auth-mode .auth-screen { min-height: 100%; }
+      .statusbar { height: 26px; }
+      .statusbar:after { content: ""; position: absolute; top: 8px; left: 50%; width: 105px; height: 22px; transform: translateX(-50%); border-radius: 15px; background: #111; }
+      .bottom-nav { position: absolute; bottom: 0; border-radius: 0 0 36px 36px; }
+      .toast { bottom: 95px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <svg class="icon-library" aria-hidden="true" focusable="false">
+      <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+      <symbol id="icon-box" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="M3 8v9l9 5 9-5V8M12 13v9"/></symbol>
+      <symbol id="icon-orders" viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 7h8M8 11h8M8 15h5"/></symbol>
+      <symbol id="icon-chat" viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l-2 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z"/><path d="M8 11h8M8 14h5"/></symbol>
+      <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/></symbol>
+      <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+      <symbol id="icon-cart" viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2A2 2 0 0 0 9.2 17H18a2 2 0 0 0 1.9-1.4L22 9H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+      <symbol id="icon-camera" viewBox="0 0 24 24"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="4"/></symbol>
+      <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.8 8.8c0 5.3-8.8 11-8.8 11s-8.8-5.7-8.8-11A4.8 4.8 0 0 1 12 6.2a4.8 4.8 0 0 1 8.8 2.6Z"/></symbol>
+      <symbol id="icon-leaf" viewBox="0 0 24 24"><path d="M20.5 3.5C10 3 4 7.5 4 14a6 6 0 0 0 6 6c6.5 0 11-6 10.5-16.5Z"/><path d="M3 22c3-6 7-9 13-13"/></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="icon-signal" viewBox="0 0 24 24"><path d="M3 9a14 14 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 15a4 4 0 0 1 6 0M12 19h.01"/></symbol>
+      <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 2 1.8 7.2L21 12l-7.2 1.8L12 21l-1.8-7.2L3 12l7.2-2.8L12 2Z"/></symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="icon-truck" viewBox="0 0 24 24"><path d="M3 6h11v12H3zM14 10h4l3 3v5h-7"/><circle cx="7.5" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+      <symbol id="icon-wallet" viewBox="0 0 24 24"><path d="M4 6h15a2 2 0 0 1 2 2v12H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h13"/><path d="M16 12h5v4h-5a2 2 0 0 1 0-4Z"/></symbol>
+      <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></symbol>
+      <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+      <symbol id="icon-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6M9 12h11"/></symbol>
+      <symbol id="icon-phone" viewBox="0 0 24 24"><path d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2c-3.2-1.3-5.7-3.8-7-7l2-2-2-5Z"/></symbol>
+      <symbol id="icon-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7ZM22 2 11 13"/></symbol>
+    </svg>
+    <div class="statusbar"><span>9:41</span><span>●●● &nbsp; ▰ &nbsp; ▰</span></div>
+    <header class="topbar">
+      <button class="icon-button" id="menuButton" aria-label="Open profile"><svg class="icon"><use href="#icon-user"></use></svg></button>
+      <div class="brand"><svg class="brand-leaf" viewBox="0 0 120 110" aria-hidden="true"><path d="M60 67C34 59 12 57 5 38c23-1 43 9 55 29Z" fill="#278c3c"/><path d="M60 67C43 39 48 17 61 3c15 22 17 43-1 64Z" fill="#329d43"/><path d="M60 67c11-26 32-37 55-32-8 22-27 31-55 32Z" fill="#267f38"/><path d="M60 104V65M60 66 18 42m42 24L60 13m0 53 42-24" fill="none" stroke="#174c2a" stroke-width="2.5" stroke-linecap="round"/></svg>E-Saud</div>
+      <div class="top-spacer"></div>
+      <button class="offline-toggle" id="offlineToggle"><svg class="icon signal"><use href="#icon-signal"></use></svg> <span id="connectionLabel">Online</span></button>
+      <button class="icon-button" id="notificationButton" aria-label="Notifications"><svg class="icon"><use href="#icon-bell"></use></svg></button>
+    </header>
+    <div class="offline-banner" id="offlineBanner">◉ Offline mode · browsing your saved catalog · messages use SMS</div>
+
+    <main>
+      <section class="screen active splash-screen" id="splashScreen" aria-label="E-Saud welcome">
+        <svg class="splash-art" viewBox="0 0 430 844" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="430" height="844" fill="var(--sky)"/>
+          <path d="M0 405c91-35 142-18 223-38 73-18 128-17 207 4v473H0Z" fill="#a9cc8a"/>
+          <path d="M0 470c77-43 151-18 227-43 78-25 129-8 203 4v413H0Z" fill="#83b36e"/>
+          <path d="M0 548c90-36 157-14 228-32 84-22 146-7 202 8v320H0Z" fill="#638f4b"/>
+          <path d="M0 620c77-22 137-13 207 4 91 23 146 34 223 14v206H0Z" fill="#d9cb7b"/>
+          <path d="M0 690c76-12 153 0 227 17 81 19 131 19 203 2v135H0Z" fill="#9fc76d"/>
+          <path d="M0 789c83-24 151-4 229 9s131 8 201-9v55H0Z" fill="#426d3c"/>
+          <g fill="none" stroke="#b6cf78" stroke-width="8" opacity=".8">
+            <path d="M109 580c82 10 151 38 292 31"/>
+            <path d="M87 615c101 9 183 40 343 29"/>
+            <path d="M66 655c119 6 214 36 364 22"/>
+            <path d="M48 699c129 4 236 28 382 14"/>
+          </g>
+          <g>
+            <path d="M76 794c7-79 13-145 15-220" fill="none" stroke="#654126" stroke-width="22" stroke-linecap="round"/>
+            <path d="m88 684-49-58m51 37 52-63m-54 92-58-22m58 1 58-38" fill="none" stroke="#654126" stroke-width="12" stroke-linecap="round"/>
+            <g fill="#4a8d36">
+              <circle cx="37" cy="606" r="44"/><circle cx="78" cy="574" r="54"/><circle cx="123" cy="601" r="45"/>
+              <circle cx="48" cy="645" r="41"/><circle cx="94" cy="640" r="49"/><circle cx="136" cy="646" r="35"/>
+            </g>
+            <g fill="#75ad44">
+              <circle cx="27" cy="598" r="20"/><circle cx="70" cy="562" r="26"/><circle cx="112" cy="587" r="20"/>
+              <circle cx="43" cy="635" r="19"/><circle cx="89" cy="623" r="24"/><circle cx="132" cy="637" r="17"/>
+            </g>
+          </g>
+        </svg>
+        <div class="splash-brand">
+          <svg class="splash-mark" viewBox="0 0 120 110" role="img" aria-label="E-Saud leaf mark">
+            <path d="M60 67C34 59 12 57 5 38c23-1 43 9 55 29Z" fill="#278c3c"/>
+            <path d="M60 67C43 39 48 17 61 3c15 22 17 43-1 64Z" fill="#329d43"/>
+            <path d="M60 67c11-26 32-37 55-32-8 22-27 31-55 32Z" fill="#267f38"/>
+            <path d="M60 104V65M60 66 18 42m42 24L60 13m0 53 42-24" fill="none" stroke="#174c2a" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="splash-wordmark">E-Saud</span>
+          <p class="splash-tagline">Diretso sa magsasaka,<br>para sa lahat</p>
+        </div>
+        <div class="splash-footer">Fresh Produce • Fair Prices • Less Waste</div>
+      </section>
+
+      <section class="screen" id="homeScreen">
+        <div class="content">
+          <div class="home-search-row">
+            <div class="searchbox"><svg class="icon"><use href="#icon-search"></use></svg><input id="searchInput" type="search" placeholder="Search products" aria-label="Search products"><button class="search-camera" id="photoSearchButton" aria-label="Search by photo"><svg class="icon"><use href="#icon-camera"></use></svg></button></div>
+            <button class="home-quick-button" id="cartButton" data-role-nav="buyer" aria-label="Shopping cart"><svg class="icon"><use href="#icon-cart"></use></svg><span class="home-quick-badge" id="cartCount"></span></button>
+            <button class="home-quick-button" id="messagesQuickButton" aria-label="Messages"><svg class="icon"><use href="#icon-chat"></use></svg><span class="home-quick-badge" id="messageCount"></span></button>
+          </div>
+          <div class="landscape">
+            <div class="landscape-copy"><strong>Support Local.<br>Buy Local.</strong><span>Fresh harvests, fair prices.</span></div>
+            <div class="basket" aria-hidden="true"><svg class="basket-art" viewBox="0 0 120 100"><path d="M15 42h90l-9 48H24z" fill="#b87835"/><path d="M28 42c0-48 64-48 64 0" fill="none" stroke="#815329" stroke-width="8"/><path d="M26 54h68M29 70h62" stroke="#d7a05f" stroke-width="5"/><circle cx="43" cy="37" r="15" fill="#d85843"/><circle cx="72" cy="32" r="16" fill="#6b9b52"/><circle cx="87" cy="40" r="13" fill="#e1ae42"/></svg></div>
+          </div>
+          <div class="section-title"><h2>Featured Products</h2><button class="text-button" id="seeAll">See All</button></div>
+          <div class="category-row" id="categoryRow">
+            <button class="chip active" data-category="all">All</button>
+            <button class="chip" data-category="vegetables">Vegetables</button>
+            <button class="chip" data-category="fruits">Fruits</button>
+            <button class="chip" data-category="staples">Staples</button>
+          </div>
+          <div class="product-grid" id="productGrid"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="cartScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> My Cart</div>
+          <div id="cartContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="checkoutScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> Checkout</div>
+          <div id="checkoutContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="orderDetailScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> Order details</div>
+          <div id="orderDetailContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="messagesScreen">
+        <div class="content">
+          <div class="back-row">Messages</div>
+          <p class="recommend-note">Your farmer conversations, saved for offline access.</p>
+          <div id="messagesList"></div>
+          <section class="message-recommendations" id="messageRecommendations">
+            <div class="section-title"><h2>Farmers for you</h2><svg class="icon accent-icon"><use href="#icon-spark"></use></svg></div>
+            <p class="recommend-note" id="messageRecommendText">Local farmers with popular fresh picks</p>
+            <div id="messageFarmersForYou"></div>
+            <p class="offline-note" id="messageCatalogTimestamp"></p>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="detailScreen">
+        <div class="content" id="detailContent"></div>
+      </section>
+
+      <section class="screen" id="chatScreen">
+        <div class="content">
+          <div class="chat-header">
+            <button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button>
+            <div class="farmer-avatar" id="chatFarmerAvatar">JD</div>
+            <div class="chat-person"><strong id="chatFarmerName">Juan Dela Cruz</strong><span class="online-label" id="chatStatus">● Online · 2m ago</span></div>
+            <button class="icon-button" id="chatCall" aria-label="Call farmer"><svg class="icon"><use href="#icon-phone"></use></svg></button>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <form class="chat-compose" id="chatForm">
+            <input id="chatInput" placeholder="Type a message..." autocomplete="off">
+            <button class="send" aria-label="Send message"><svg class="icon"><use href="#icon-send"></use></svg></button>
+          </form>
+          <div class="offline-card"><span class="offline-symbol">◉</span><div><strong id="offlineChatTitle">Online chat</strong><span id="offlineChatText">Your messages stay in the app.</span></div></div>
+          <div class="notice" id="chatGuidance">Confirm current availability and price with the farmer before arranging pickup.</div>
+        </div>
+      </section>
+
+      <section class="screen" id="inventoryScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> Manage Inventory</div>
+          <div id="inventoryContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="ordersScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> Orders & Delivery</div>
+          <div id="ordersContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="notificationsScreen">
+        <div class="content">
+          <div class="back-row">Notifications <button class="text-button" id="markNotificationsRead">Mark all read</button></div>
+          <section class="notification-section">
+            <div class="profile-block-head"><h2>Order Updates</h2><button class="text-button" id="viewAllOrderUpdates">View All ›</button></div>
+            <div id="orderNotificationList"></div>
+          </section>
+          <section class="notification-section">
+            <div class="profile-block-head"><h2>Latest Updates</h2><span style="font-size:12px;color:#68796d">E-Saud</span></div>
+            <div class="update-category-row">
+            <button class="update-category active" data-update-category="Marketplace"><span><svg class="icon"><use href="#icon-box"></use></svg></span>Marketplace</button>
+            <button class="update-category" data-update-category="Farmers"><span><svg class="icon"><use href="#icon-user"></use></svg></span>Farmers</button>
+            <button class="update-category" data-update-category="Offline"><span><svg class="icon"><use href="#icon-signal"></use></svg></span>Offline</button>
+            <button class="update-category" data-update-category="Delivery"><span><svg class="icon"><use href="#icon-arrow"></use></svg></span>Delivery</button>
+            </div>
+            <div id="latestUpdates"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="trackingScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> Track order</div>
+          <div id="trackingContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="profileScreen">
+        <div class="content">
+          <div class="back-row">My Profile</div>
+          <div id="profileContent"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="catalogScreen">
+        <div class="content">
+          <div class="back-row"><button class="back" data-back aria-label="Back"><svg class="icon"><use href="#icon-back"></use></svg></button> Cached Catalog</div>
+          <div class="catalog-date" id="cacheDate"></div>
+          <div class="stock-pill" style="display:block;text-align:center;margin:0 auto 13px;width:max-content">View Offline</div>
+          <div id="cachedProducts"></div>
+          <div class="reply-box">
+            <strong>SMS availability reply</strong>
+            <p>Apply a farmer reply to update saved listing info on this device.</p>
+            <select id="smsProduct"></select>
+            <input id="smsReply" placeholder="Example: AVAILABLE 20 PRICE 65">
+            <button class="primary" id="applySmsReply">Update listing</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="authScreen">
+        <div class="auth-screen">
+          <div class="auth-art">
+            <svg class="welcome-landscape" viewBox="0 0 430 250" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 70C72 51 115 79 181 61s129-25 249-2v191H0Z" fill="#a9cc8a"/>
+              <path d="M0 99c77-26 141-5 215-26s145-8 215 4v173H0Z" fill="#83b36e"/>
+              <path d="M0 141c78-30 143-4 229-23s132-11 201 2v130H0Z" fill="#638f4b"/>
+              <path d="M0 155c67-18 134-4 206 13s141 22 224 3v79H0Z" fill="#d9cb7b"/>
+              <path d="M0 196c80-13 146-3 222 15s139 17 208-4v43H0Z" fill="#9fc76d"/>
+              <path d="M0 224c78-12 154 4 222 13s141 4 208-9v22H0Z" fill="#426d3c"/>
+              <g fill="none" stroke="#b6cf78" stroke-width="5" opacity=".8">
+                <path d="M120 144c74 8 147 34 218 31"/>
+                <path d="M104 162c81 9 154 34 250 32"/>
+                <path d="M93 181c95 8 175 32 288 28"/>
+                <path d="M82 201c109 5 205 28 328 20"/>
+              </g>
+              <g>
+                <path d="M62 227c8-48 12-82 14-119" fill="none" stroke="#654126" stroke-width="12" stroke-linecap="round"/>
+                <path d="M70 164 45 132m29 15 26-35m-27 56-30-14m29 4 32-19" fill="none" stroke="#654126" stroke-width="6" stroke-linecap="round"/>
+                <g fill="#4a8d36">
+                  <circle cx="40" cy="111" r="29"/><circle cx="69" cy="91" r="34"/><circle cx="99" cy="111" r="29"/>
+                  <circle cx="49" cy="136" r="27"/><circle cx="82" cy="132" r="31"/><circle cx="108" cy="137" r="22"/>
+                </g>
+                <g fill="#75ad44">
+                  <circle cx="31" cy="104" r="13"/><circle cx="61" cy="81" r="17"/><circle cx="91" cy="98" r="13"/>
+                  <circle cx="46" cy="127" r="13"/><circle cx="77" cy="119" r="16"/><circle cx="103" cy="130" r="11"/>
+                </g>
+              </g>
+            </svg>
+            <svg class="auth-leaf" viewBox="0 0 120 110" role="img" aria-label="E-Saud leaf logo">
+              <path d="M60 67C34 59 12 57 5 38c23-1 43 9 55 29Z" fill="#278c3c"/>
+              <path d="M60 67C43 39 48 17 61 3c15 22 17 43-1 64Z" fill="#329d43"/>
+              <path d="M60 67c11-26 32-37 55-32-8 22-27 31-55 32Z" fill="#267f38"/>
+              <path d="M60 104V65M60 66 18 42m42 24L60 13m0 53 42-24" fill="none" stroke="#174c2a" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <span class="auth-logo">E-Saud</span>
+            <span class="auth-tagline" id="authTagline">Connect • Trade • Grow</span>
+            <span class="auth-footer" id="authFooter">Fresh Produce · Fair Prices · Less Waste</span>
+          </div>
+          <div id="authStage"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button data-screen="homeScreen" data-role-nav="buyer" aria-current="page"><svg class="icon"><use href="#icon-home"></use></svg><span>Home</span></button>
+      <button data-screen="inventoryScreen" data-role-nav="seller"><svg class="icon"><use href="#icon-box"></use></svg><span>Products</span></button>
+      <button data-screen="ordersScreen" data-role-nav="seller"><svg class="icon"><use href="#icon-orders"></use></svg><span>Orders</span></button>
+      <button data-screen="messagesScreen" data-role-nav="buyer seller"><svg class="icon"><use href="#icon-chat"></use></svg><span>Messages</span></button>
+      <button data-screen="notificationsScreen" data-role-nav="buyer seller"><svg class="icon"><use href="#icon-bell"></use></svg><span>Updates</span></button>
+      <button data-screen="profileScreen" data-role-nav="buyer seller"><svg class="icon"><use href="#icon-user"></use></svg><span>Profile</span></button>
+    </nav>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (function () {
+      "use strict";
+      const initialProducts = [
+        { id: "tomato", name: "Tomatoes", category: "vegetables", price: 60, unit: "kg", stock: 50, seller: "Juan Dela Cruz", initials: "JD", place: "Sorsogon City", rating: "4.8 (120 reviews)", srp: 60, phone: "+639171234567", updated: "2h ago" },
+        { id: "eggplant", name: "Eggplant", category: "vegetables", price: 50, unit: "kg", stock: 26, seller: "Maria B. Farm", initials: "MB", place: "Bacon, Sorsogon", rating: "4.7 (46 reviews)", srp: 48, phone: "+639181234567", updated: "Today" },
+        { id: "carrots", name: "Carrots", category: "vegetables", price: 40, unit: "kg", stock: 20, seller: "Green Valley Co-op", initials: "GV", place: "Casiguran, Sorsogon", rating: "4.9 (82 reviews)", srp: 42, phone: "+639191234567", updated: "1h ago" },
+        { id: "kalabasa", name: "Squash", category: "vegetables", price: 35, unit: "kg", stock: 18, seller: "Juan Dela Cruz", initials: "JD", place: "Sorsogon City", rating: "4.8 (120 reviews)", srp: 36, phone: "+639171234567", updated: "2h ago" },
+        { id: "pechay", name: "Pechay", category: "vegetables", price: 30, unit: "bundle", stock: 32, seller: "Green Valley Co-op", initials: "GV", place: "Casiguran, Sorsogon", rating: "4.9 (82 reviews)", srp: 32, phone: "+639191234567", updated: "1h ago" },
+        { id: "banana", name: "Latundan banana", category: "fruits", price: 55, unit: "kg", stock: 30, seller: "Rico's Orchard", initials: "RO", place: "Gubat, Sorsogon", rating: "4.6 (39 reviews)", srp: 58, phone: "+639201234567", updated: "Yesterday" },
+        { id: "rice", name: "Local rice", category: "staples", price: 58, unit: "kg", stock: 100, seller: "San Isidro Farmers", initials: "SI", place: "Juban, Sorsogon", rating: "4.8 (54 reviews)", srp: 60, phone: "+639211234567", updated: "Yesterday" }
+      ];
+      const initialInventory = [
+        { id: "tomato", quantity: 50, available: true },
+        { id: "eggplant", quantity: 26, available: true },
+        { id: "kalabasa", quantity: 18, available: true },
+        { id: "pechay", quantity: 32, available: true }
+      ];
+      function load(key, fallback) {
+        try {
+          const value = localStorage.getItem("esaud." + key);
+          return value ? JSON.parse(value) : fallback;
+        } catch (error) {
+          console.warn("E-Saud local data could not be read.", error);
+          return fallback;
+        }
+      }
+      function store(key, value) {
+        try { localStorage.setItem("esaud." + key, JSON.stringify(value)); }
+        catch (error) { notify("Unable to save on this device."); console.error("E-Saud local save failed.", error); }
+      }
+      let products = load("products", initialProducts);
+      let inventory = load("inventory", initialInventory);
+      let chats = load("chats", [{
+        id: "tomato",
+        messages: [
+          { mine: true, text: "Magandang araw po! May available pa po bang tomatoes?", time: "9:30 AM" },
+          { mine: false, text: "Oo, meron pa po.", time: "9:33 AM" }
+        ]
+      }]);
+      let cartItems = load("cart", []);
+      let favorites = load("favorites", []);
+      let searches = load("searches", []);
+      let demoOffline = load("offline", false);
+      let offline = demoOffline || !navigator.onLine;
+      let selectedCategory = "all";
+      let selectedProductId = "tomato";
+      let activeChatId = "tomato";
+      let quantity = 1;
+      let delivery = load("delivery", "Tricycle");
+          let authTab = "login";
+          let authStage = "account";
+      let authIdentifierPrefill = "";
+      let authNamePrefill = "";
+      let localAuthUser = null;
+      let checkoutItems = [];
+      let checkoutSource = "cart";
+      let checkoutRecipient = "";
+      let checkoutPhone = "";
+      let checkoutAddress = "";
+      let checkoutMessage = "";
+      let buyerOrderFilter = "All";
+      let selectedOrderIndex = -1;
+      let userRole = load("role", "buyer");
+      let account = load("account", { name: "Juan Dela Cruz", location: "Sorsogon City" });
+      if (!account || typeof account.name !== "string") {
+        account = { name: "Juan Dela Cruz", location: "Sorsogon City" };
+        store("account", account);
+      }
+          let setupComplete = load("setupComplete", false);
+      let toastTimer;
+          let screenHistory = [];
+      const app = document.getElementById("app");
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+        });
+      }
+      function normalizeAuthIdentifier(value) {
+        const identifier = String(value || "").trim();
+        if (identifier.indexOf("@") !== -1) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)
+            ? { type: "email", value: identifier.toLowerCase() }
+            : null;
+        }
+        let phone = identifier.replace(/[^\d+]/g, "");
+        if (/^09\d{9}$/.test(phone)) phone = "+63" + phone.slice(1);
+        else if (/^9\d{9}$/.test(phone)) phone = "+63" + phone;
+        else if (/^639\d{9}$/.test(phone)) phone = "+" + phone;
+        return /^\+[1-9]\d{7,14}$/.test(phone) ? { type: "phone", value: phone } : null;
+      }
+      function randomHex(byteCount) {
+        const bytes = window.crypto.getRandomValues(new Uint8Array(byteCount));
+        return Array.from(bytes).map(function (byte) { return byte.toString(16).padStart(2, "0"); }).join("");
+      }
+      async function hashLocalPassword(password, saltHex) {
+        if (!window.crypto || !window.crypto.subtle) {
+          throw new Error("Secure local sign-in is unavailable in this browser.");
+        }
+        const salt = new Uint8Array(saltHex.match(/.{2}/g).map(function (byte) { return parseInt(byte, 16); }));
+        const key = await window.crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+        const hash = await window.crypto.subtle.deriveBits({
+          name: "PBKDF2",
+          salt: salt,
+          iterations: 120000,
+          hash: "SHA-256"
+        }, key, 256);
+        return Array.from(new Uint8Array(hash)).map(function (byte) { return byte.toString(16).padStart(2, "0"); }).join("");
+      }
+      function hashMatches(expected, actual) {
+        if (typeof expected !== "string" || expected.length !== actual.length) return false;
+        let difference = 0;
+        for (let index = 0; index < expected.length; index += 1) {
+          difference |= expected.charCodeAt(index) ^ actual.charCodeAt(index);
+        }
+        return difference === 0;
+      }
+      function localAccounts() {
+        const accounts = load("localAccounts", []);
+        return Array.isArray(accounts) ? accounts.filter(function (entry) {
+          return entry && typeof entry.id === "string" && typeof entry.identifier === "string" &&
+            typeof entry.salt === "string" && typeof entry.passwordHash === "string";
+        }) : [];
+      }
+      function saveLocalAccounts(accounts) {
+        try {
+          localStorage.setItem("esaud.localAccounts", JSON.stringify(accounts));
+        } catch (error) {
+          console.error("E-Saud could not save local account data.", error);
+          throw new Error("Could not save this account on the device. Check available storage and try again.");
+        }
+      }
+      function icon(name, className) {
+        return '<svg class="icon ' + (className || "") + '" aria-hidden="true"><use href="#icon-' + name + '"></use></svg>';
+      }
+      function farmerInitials(name) {
+        return String(name || "Local farmer").split(/\s+/).slice(0, 2).map(function (part) {
+          return part.charAt(0);
+        }).join("").toUpperCase();
+      }
+      function productArtwork(product) {
+        const art = {
+          tomato: '<circle cx="48" cy="55" r="27" fill="#d95a45"/><path d="m48 28 4 10 12-5-8 10 12 4-14 2-6 10-5-12-12 2 10-8-4-10 11 6Z" fill="#507f43"/>',
+          eggplant: '<path d="M37 29c13-12 33-4 34 12 1 11-11 30-28 35-12 4-22-3-18-15 4-13 22-18 25-29-4 2-9 2-13-3Z" fill="#74548d"/><path d="m41 26 5 10 9-7-5 12-12-3-8 4 5-11Z" fill="#5b8547"/>',
+          carrots: '<path d="m30 32 35 12-24 34c-3 4-8 3-9-2Z" fill="#e9963c"/><path d="M35 32 29 18m10 14 2-18m2 20 13-14" stroke="#59854b" stroke-width="6" stroke-linecap="round"/><path d="m38 52 10 4m-13 5 8 3" stroke="#f6c26f" stroke-width="2"/>',
+          kalabasa: '<path d="M48 30c-19-12-34 2-32 22 2 19 14 27 32 18 18 9 30 1 32-18 2-20-13-34-32-22Z" fill="#e9a43c"/><path d="M48 30c-7 12-7 28 0 40m0-40c8 12 8 28 0 40" fill="none" stroke="#c77c2c" stroke-width="3"/><path d="M48 31c-2-9 1-14 9-18" fill="none" stroke="#63864a" stroke-width="6" stroke-linecap="round"/>',
+          pechay: '<path d="M47 75C18 62 20 35 33 23c13 11 16 24 15 52Zm3 0c-2-31 10-51 25-57 8 23 1 45-25 57Z" fill="#6a9c5e"/><path d="M49 78 35 34m14 44 19-47" fill="none" stroke="#f2f0d7" stroke-width="4" stroke-linecap="round"/><path d="M47 76c-7-13-7-23-4-32 8 7 11 18 4 32Z" fill="#e7e2bb"/>',
+          banana: '<path d="M21 57c20 17 42 13 61-16 5-8 11-7 12 1-5 25-28 43-51 39-12-2-21-9-27-19-2-3 1-7 5-5Z" fill="#e6c447"/><path d="M20 56 15 51m77-10 5 2" stroke="#6b8142" stroke-width="5" stroke-linecap="round"/><path d="M31 67c16 9 34 5 49-11" fill="none" stroke="#f5dc72" stroke-width="3"/>',
+          rice: '<path d="M46 81c2-25 2-45-5-64m8 64c1-29 12-47 20-60m-24 39C31 49 24 39 22 28m28 22c14-8 23-19 28-31" fill="none" stroke="#63864a" stroke-width="3" stroke-linecap="round"/><g fill="#e2bf67"><ellipse cx="36" cy="30" rx="4" ry="8" transform="rotate(-35 36 30)"/><ellipse cx="29" cy="39" rx="4" ry="8" transform="rotate(-35 29 39)"/><ellipse cx="66" cy="29" rx="4" ry="8" transform="rotate(30 66 29)"/><ellipse cx="73" cy="38" rx="4" ry="8" transform="rotate(30 73 38)"/><ellipse cx="76" cy="25" rx="4" ry="8" transform="rotate(30 76 25)"/></g>'
+        };
+        const illustration = art[product.id] || '<circle cx="48" cy="51" r="27" fill="#dfad49"/><path d="M48 24c-7-11-3-17 8-18" fill="none" stroke="#63864a" stroke-width="5" stroke-linecap="round"/>';
+        return '<svg class="produce-art" viewBox="0 0 96 96" role="img" aria-label="' + escapeHtml(product.name) + ' illustration">' + illustration + '</svg>';
+      }
+      function emptyState(symbol, title, message) {
+        return '<div class="empty-state"><span class="empty-illustration">' + icon(symbol) + '</span><strong>' +
+          escapeHtml(title) + '</strong><p>' + escapeHtml(message) + '</p></div>';
+      }
+      function formatMoney(amount) {
+        return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(Number(amount) || 0);
+      }
+      function availableStock(product) {
+        const item = inventory.find(function (entry) { return entry.id === product.id; });
+        return item ? (item.available ? Math.max(0, Number(item.quantity) || 0) : 0) : Math.max(0, Number(product.stock) || 0);
+      }
+      function orderItems(order) {
+        return Array.isArray(order.items) ? order.items : [{
+          id: order.id,
+          quantity: Number(order.quantity) || 0,
+          unitPrice: Number(order.unitPrice) || Number((productById(order.id) || {}).price) || 0,
+          seller: order.seller
+        }];
+      }
+      function orderStatus(order) {
+        const status = String(order.status || "To Ship").toLowerCase();
+        if (status === "new" || status === "pending confirmation" || status === "confirmed" || status === "preparing") return "To Ship";
+        if (status === "shipped" || status === "in transit" || status === "to receive") return "To Receive";
+        if (status === "delivered" || status === "completed") return "Completed";
+        return status === "to pay" ? "To Pay" : "To Ship";
+      }
+      function orderSubtotal(order) {
+        return orderItems(order).reduce(function (total, item) {
+          return total + Number(item.quantity || 0) * Number(item.unitPrice || 0);
+        }, 0);
+      }
+      function orderTotal(order) {
+        return orderSubtotal(order) + Number(order.deliveryFee || 0);
+      }
+      function placeOrder(items, fulfillment) {
+        const normalizedItems = [];
+        items.forEach(function (item) {
+          const existing = normalizedItems.find(function (entry) { return entry.id === item.id; });
+          if (existing) existing.quantity = Number(existing.quantity) + Number(item.quantity);
+          else normalizedItems.push({ id: item.id, quantity: Number(item.quantity) });
+        });
+        const productsToOrder = normalizedItems.map(function (item) {
+          return { item: item, product: productById(item.id) };
+        });
+        const invalid = productsToOrder.find(function (entry) {
+          return !entry.product ||
+            entry.product.seller === account.name ||
+            !Number.isInteger(Number(entry.item.quantity)) ||
+            Number(entry.item.quantity) < 1 ||
+            Number(entry.item.quantity) > availableStock(entry.product);
+        });
+        if (invalid) {
+          notify(invalid.product && invalid.product.seller === account.name
+            ? "You cannot order your own listing."
+            : invalid.product
+              ? "Only " + availableStock(invalid.product) + " " + invalid.product.unit + " of " + invalid.product.name + " are available."
+              : "A product in your order is no longer available.");
+          renderProducts();
+          return false;
+        }
+
+        const groups = [];
+        productsToOrder.forEach(function (entry) {
+          const item = entry.item;
+          const product = entry.product;
+          let group = groups.find(function (candidate) { return candidate.seller === product.seller; });
+          if (!group) {
+            group = { seller: product.seller, items: [] };
+            groups.push(group);
+          }
+          group.items.push({
+            id: item.id,
+            quantity: Number(item.quantity),
+            unitPrice: Number(product.price),
+            seller: product.seller
+          });
+        });
+        const orders = load("orders", []);
+        groups.forEach(function (group) {
+          const firstItem = group.items[0];
+          orders.unshift({
+            orderId: randomHex(12),
+            items: group.items,
+            id: firstItem.id,
+            quantity: firstItem.quantity,
+            seller: group.seller,
+            buyer: account.name,
+            unitPrice: firstItem.unitPrice,
+            recipient: fulfillment.recipient,
+            phone: fulfillment.phone,
+            address: fulfillment.address,
+            delivery: fulfillment.delivery,
+            deliveryFee: Number(fulfillment.deliveryFee) || 0,
+            message: fulfillment.message,
+            date: Date.now(),
+            status: "To Ship"
+          });
+        });
+        productsToOrder.forEach(function (entry) {
+          const item = entry.item;
+          const product = entry.product;
+          const stock = availableStock(product) - Number(item.quantity);
+          product.stock = stock;
+          const inventoryItem = inventory.find(function (record) { return record.id === product.id; });
+          if (inventoryItem) {
+            inventoryItem.quantity = stock;
+            inventoryItem.available = stock > 0;
+          }
+        });
+
+        store("orders", orders);
+        store("products", products);
+        store("inventory", inventory);
+        updateConnection();
+        return true;
+      }
+      function deliveryCost(method) {
+        return { Rider: 50, Tricycle: 80, Hauler: 120, "Hub pickup": 0 }[method] || 0;
+      }
+      function beginCheckout(items, source) {
+        checkoutItems = items.map(function (item) { return { id: item.id, quantity: Number(item.quantity) }; });
+        if (!checkoutItems.length) {
+          notify("Your order is empty.");
+          return;
+        }
+        checkoutSource = source;
+        checkoutRecipient = account.name || "";
+        checkoutPhone = account.phone || "";
+        checkoutAddress = load("deliveryAddress", "");
+        checkoutMessage = "";
+        delivery = load("delivery", "Tricycle");
+        renderCheckout();
+        setScreen("checkoutScreen");
+      }
+      function renderCheckout() {
+        const subtotal = checkoutItems.reduce(function (sum, item) {
+          const product = productById(item.id);
+          return sum + (product ? product.price * item.quantity : 0);
+        }, 0);
+        const sellerCount = new Set(checkoutItems.map(function (item) {
+          const product = productById(item.id);
+          return product ? product.seller : "";
+        }).filter(Boolean)).size;
+        const deliveryFee = deliveryCost(delivery) * sellerCount;
+        const itemsHtml = checkoutItems.map(function (item) {
+          const product = productById(item.id);
+          if (!product) return "";
+          return '<div class="order-row"><div class="order-thumb">' + productArtwork(product) + '</div><div class="order-copy"><strong>' +
+            escapeHtml(product.name) + '</strong><span>' + item.quantity + ' ' + escapeHtml(product.unit) + ' · ' +
+            formatMoney(item.quantity * product.price) + '</span></div></div>';
+        }).join("");
+        document.getElementById("checkoutContent").innerHTML =
+          '<div class="section-card"><h3>Delivery address</h3>' +
+          '<label class="field">Recipient name<input id="checkoutRecipient" maxlength="60" autocomplete="name" value="' + escapeHtml(checkoutRecipient) + '" required></label>' +
+          '<label class="field">Mobile number<input id="checkoutPhone" type="tel" autocomplete="tel" placeholder="09XXXXXXXXX" value="' + escapeHtml(checkoutPhone) + '" required></label>' +
+          '<label class="field">Where should we deliver?<textarea id="checkoutAddress" rows="3" maxlength="240" placeholder="e.g. Sorsogon City Central Hub, barangay, street, and house number" required>' + escapeHtml(checkoutAddress) + '</textarea></label>' +
+          '</div><div class="section-card"><h3>Delivery method</h3>' +
+          '<button class="delivery-option ' + (delivery === "Rider" ? "selected" : "") + '" data-delivery-method="Rider">' + icon("truck", "delivery-emoji") + '<span><strong>Local rider</strong><span>About 1–2 hours</span></span><b>₱50</b></button>' +
+          '<button class="delivery-option ' + (delivery === "Tricycle" ? "selected" : "") + '" data-delivery-method="Tricycle">' + icon("truck", "delivery-emoji") + '<span><strong>Tricycle</strong><span>About 1–3 hours</span></span><b>₱80</b></button>' +
+          '<button class="delivery-option ' + (delivery === "Hauler" ? "selected" : "") + '" data-delivery-method="Hauler">' + icon("truck", "delivery-emoji") + '<span><strong>Hauler</strong><span>About 2–4 hours</span></span><b>₱120</b></button>' +
+          '<button class="delivery-option ' + (delivery === "Hub pickup" ? "selected" : "") + '" data-delivery-method="Hub pickup">' + icon("pin", "delivery-emoji") + '<span><strong>Pick up at Sorsogon City Central Hub</strong><span>No delivery fee</span></span><b>Free</b></button>' +
+          '<p class="recommend-note">Delivery fees are estimates and can be confirmed with the farmer.</p></div>' +
+          '<div class="section-card"><h3>Delivery instructions <span class="recommend-note">(optional)</span></h3><p class="recommend-note">Add a landmark, gate instructions, or another note for the farmer.</p><textarea class="delivery-note-input" id="checkoutMessage" rows="3" maxlength="240" aria-label="Delivery instructions or a note" placeholder="e.g. Leave the order with the guard at the main gate">' + escapeHtml(checkoutMessage) + '</textarea></div>' +
+          '<div class="section-card"><h3>Order summary</h3>' + itemsHtml +
+          '<div class="profile-block-head"><span>Items</span><strong>' + formatMoney(subtotal) + '</strong></div>' +
+          '<div class="profile-block-head"><span>Delivery' + (sellerCount > 1 ? " (" + sellerCount + " sellers)" : "") + '</span><strong>' + formatMoney(deliveryFee) + '</strong></div>' +
+          '<div class="profile-block-head"><strong>Total</strong><strong>' + formatMoney(subtotal + deliveryFee) + '</strong></div>' +
+          '<button class="primary full" id="placeOrderButton">Place order</button></div>';
+
+        ["checkoutRecipient", "checkoutPhone", "checkoutAddress", "checkoutMessage"].forEach(function (id) {
+          document.getElementById(id).addEventListener("input", function () {
+            if (id === "checkoutRecipient") checkoutRecipient = this.value;
+            if (id === "checkoutPhone") checkoutPhone = this.value;
+            if (id === "checkoutAddress") checkoutAddress = this.value;
+            if (id === "checkoutMessage") checkoutMessage = this.value;
+          });
+        });
+        document.querySelectorAll("[data-delivery-method]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            delivery = button.dataset.deliveryMethod;
+            store("delivery", delivery);
+            renderCheckout();
+          });
+        });
+        document.getElementById("placeOrderButton").addEventListener("click", function () {
+          checkoutRecipient = document.getElementById("checkoutRecipient").value.trim();
+          checkoutPhone = document.getElementById("checkoutPhone").value.trim();
+          checkoutAddress = document.getElementById("checkoutAddress").value.trim();
+          checkoutMessage = document.getElementById("checkoutMessage").value.trim();
+          const phone = normalizeAuthIdentifier(checkoutPhone);
+          if (!checkoutRecipient || !checkoutAddress || !phone || phone.type !== "phone") {
+            notify("Enter the recipient name, delivery address, and a valid mobile number.");
+            return;
+          }
+          account.name = checkoutRecipient;
+          account.phone = phone.value;
+          store("account", account);
+          store("deliveryAddress", checkoutAddress);
+          if (!placeOrder(checkoutItems, {
+            recipient: checkoutRecipient,
+            phone: phone.value,
+            address: checkoutAddress,
+            delivery: delivery,
+            deliveryFee: deliveryCost(delivery),
+            message: checkoutMessage
+          })) return;
+          if (checkoutSource === "cart") {
+            cartItems = [];
+            store("cart", cartItems);
+          }
+          checkoutItems = [];
+          buyerOrderFilter = "To Ship";
+          updateHomeBadges();
+          renderProducts();
+          renderNotifications();
+          renderOrders();
+          setScreen("ordersScreen");
+          notify("Order placed. Find its delivery details under Profile → To Ship.");
+        });
+      }
+      function notify(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove("show"); }, 2400);
+      }
+      function productById(id) { return products.find(function (p) { return p.id === id; }); }
+      function toggleFavorite(id) {
+        const index = favorites.indexOf(id);
+        if (index === -1) favorites.push(id);
+        else favorites.splice(index, 1);
+        store("favorites", favorites);
+        return index === -1;
+      }
+      function updateHomeBadges() {
+        const cartCount = cartItems.reduce(function (total, item) { return total + item.quantity; }, 0);
+        const cartBadge = document.getElementById("cartCount");
+        cartBadge.textContent = cartCount > 99 ? "99+" : String(cartCount);
+        cartBadge.style.display = cartCount ? "block" : "none";
+        const messageCount = chats.filter(function (chat) {
+          const product = productById(chat.id);
+          return userRole === "seller" ? !!product && product.seller === account.name : !product || product.seller !== account.name;
+        }).length;
+        const messageBadge = document.getElementById("messageCount");
+        messageBadge.textContent = messageCount > 99 ? "99+" : String(messageCount);
+        messageBadge.style.display = messageCount ? "block" : "none";
+      }
+      function setScreen(id, fromBack) {
+        const current = document.querySelector(".screen.active");
+        if (!fromBack && current && current.id !== id && current.id !== "splashScreen" && current.id !== "authScreen") {
+          screenHistory.push(current.id);
+          if (screenHistory.length > 20) screenHistory.shift();
+        }
+        document.querySelectorAll(".screen").forEach(function (screen) { screen.classList.toggle("active", screen.id === id); });
+        app.classList.toggle("auth-mode", id === "authScreen");
+        app.classList.toggle("splash-mode", id === "splashScreen");
+        document.querySelectorAll(".bottom-nav button").forEach(function (button) {
+          const active = button.dataset.screen === id ||
+            ((id === "detailScreen" || id === "catalogScreen" || id === "cartScreen") && button.dataset.screen === "homeScreen") ||
+            (id === "chatScreen" && button.dataset.screen === "messagesScreen") ||
+            ((id === "ordersScreen" || id === "trackingScreen") && button.dataset.screen === (userRole === "seller" ? "ordersScreen" : "profileScreen"));
+          button.classList.toggle("active", active);
+          if (active) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
+        window.scrollTo(0, 0);
+      }
+      function goBack() {
+        const current = document.querySelector(".screen.active");
+        let destination = "";
+        while (screenHistory.length && !destination) {
+          const candidate = screenHistory.pop();
+          if (current && candidate !== current.id && document.getElementById(candidate)) destination = candidate;
+        }
+        if (!destination) {
+          destination = current && current.id === "trackingScreen" ? "ordersScreen" :
+            current && current.id === "chatScreen" ? "messagesScreen" :
+              current && current.id === "inventoryScreen" ? "profileScreen" :
+                userRole === "seller" ? "inventoryScreen" : "homeScreen";
+        }
+        if (destination === "ordersScreen") renderOrders();
+        if (destination === "inventoryScreen") renderInventory();
+        if (destination === "messagesScreen") renderMessages();
+        if (destination === "profileScreen") renderProfile();
+        if (destination === "catalogScreen") renderCachedCatalog();
+        setScreen(destination, true);
+      }
+      function renderRoleNavigation() {
+        document.querySelectorAll("[data-role-nav]").forEach(function (button) {
+          button.hidden = button.dataset.roleNav.split(" ").indexOf(userRole) === -1;
+        });
+      }
+      function updateConnection() {
+        app.classList.toggle("offline", offline);
+        const status = offline ? "Offline" : "Local only";
+        const refreshed = new Date(load("cachedAt", Date.now())).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        document.getElementById("connectionLabel").textContent = status;
+        document.getElementById("offlineToggle").setAttribute("aria-label", status + " · Catalog last saved " + refreshed);
+        document.getElementById("offlineBanner").textContent = offline
+          ? "Offline · Cached listings and changes are saved on this device. Last catalog save " + refreshed + "."
+          : "Local-only mode · Listings, messages, and orders are saved in this browser.";
+        document.getElementById("chatStatus").textContent = offline ? "● Offline · saved on device" : "● Local · saved on device";
+        document.getElementById("offlineChatTitle").textContent = offline ? "Offline Mode" : "Local chat";
+        document.getElementById("offlineChatText").textContent = offline
+          ? userRole === "seller" ? "Replies stay on this device; they are not sent to a server." : "Choose SMS to contact a farmer. Carrier charges may apply."
+          : "Messages stay in this browser and are not sent to a server.";
+      }
+      function renderProducts() {
+        const query = document.getElementById("searchInput").value.trim().toLowerCase();
+        const found = products.filter(function (p) {
+          return (userRole !== "buyer" || p.seller !== account.name) &&
+            (selectedCategory === "all" || p.category === selectedCategory) &&
+            (!query || [p.name, p.seller, p.category].join(" ").toLowerCase().includes(query));
+        });
+        const grid = document.getElementById("productGrid");
+        grid.innerHTML = found.length ? found.map(function (p) {
+          const item = inventory.find(function (entry) { return entry.id === p.id; });
+          const available = item ? item.available && item.quantity > 0 : p.stock > 0;
+          return '<article class="product-card" data-product="' + p.id + '">' +
+            '<div class="product-image"><button class="product-open" data-open-product="' + p.id + '" aria-label="View ' + escapeHtml(p.name) + '">' + productArtwork(p) + '</button><button class="heart ' + (favorites.indexOf(p.id) !== -1 ? "saved" : "") + '" data-favorite="' + p.id + '" aria-label="Save ' + escapeHtml(p.name) + '" aria-pressed="' + String(favorites.indexOf(p.id) !== -1) + '">' + icon("heart") + '</button></div>' +
+            '<div class="product-info"><button class="product-title product-open" data-open-product="' + p.id + '">' + escapeHtml(p.name) + '</button><div class="product-price">' + formatMoney(p.price) + '/' + escapeHtml(p.unit) + '</div>' +
+            '<span class="stock-pill ' + (available ? "" : "sold") + '">' + (available ? "In Stock" : "Sold Out") + '</span>' +
+            '<div class="seller-byline"><span class="seller-avatar">' + escapeHtml(p.initials || farmerInitials(p.seller)) + '</span><span><strong>Listed by ' + escapeHtml(p.seller) + '</strong><br>' + escapeHtml(p.place) + '</span></div></div></article>';
+        }).join("") : emptyState("box", "No products found", "Try another search or category.");
+        grid.querySelectorAll("[data-open-product]").forEach(function (button) {
+          button.addEventListener("click", function () { openProduct(button.dataset.openProduct); });
+        });
+        grid.querySelectorAll("[data-favorite]").forEach(function (button) {
+          button.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const saved = toggleFavorite(button.dataset.favorite);
+            button.classList.toggle("saved", saved);
+            button.setAttribute("aria-pressed", String(saved));
+            notify(saved ? "Saved to your favorites." : "Removed from your favorites.");
+          });
+        });
+      }
+      function renderRecommendations() {
+        const term = searches.length ? searches[searches.length - 1] : "";
+        document.getElementById("messageRecommendText").textContent = term ? 'Based on your search for "' + term + '"' : "Local farmers with popular fresh picks";
+        const otherFarmers = products.filter(function (p) { return p.seller !== account.name; });
+        let matches = term ? otherFarmers.filter(function (p) { return (p.name + " " + p.category).toLowerCase().includes(term.toLowerCase()); }) : [];
+        if (!matches.length) matches = otherFarmers.slice(0, 3);
+        const farmers = [];
+        matches.forEach(function (p) {
+          if (!farmers.some(function (item) { return item.seller === p.seller; })) farmers.push(p);
+        });
+        const recommendations = farmers.slice(0, 3);
+        document.getElementById("messageFarmersForYou").innerHTML = recommendations.length ? recommendations.map(function (p) {
+          return '<button class="farmer-rec" data-message-rec-product="' + p.id + '"><span class="farmer-avatar">' + escapeHtml(p.initials || farmerInitials(p.seller)) + '</span><span><strong>' + escapeHtml(p.seller) + '</strong><small>' + escapeHtml(p.name) + ' · ' + escapeHtml(p.place) + '</small></span>' + icon("arrow", "go") + '</button>';
+        }).join("") : emptyState("user", "No other farmers yet", "New local sellers will appear here.");
+        const savedAt = "Saved for offline · " + new Date(load("cachedAt", Date.now())).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+        document.getElementById("messageCatalogTimestamp").textContent = savedAt;
+        document.querySelectorAll("[data-message-rec-product]").forEach(function (button) {
+          button.addEventListener("click", function () { openChat(button.dataset.messageRecProduct); });
+        });
+      }
+      function renderMessages() {
+        document.getElementById("messageRecommendations").hidden = userRole === "seller";
+        document.querySelector("#messagesScreen .recommend-note").textContent = userRole === "seller"
+          ? "Buyer messages about your listings, saved for offline access."
+          : "Your farmer conversations, saved for offline access.";
+        const visibleChats = visibleChatsForRole();
+        document.getElementById("messagesList").innerHTML = visibleChats.length ? visibleChats.map(function (chat) {
+          const p = productById(chat.id);
+          const last = chat.messages[chat.messages.length - 1];
+          const counterpart = chatCounterparty(chat, p);
+          const preview = userRole === "seller"
+            ? chat.messages.slice().reverse().find(function (message) { return message.mine; }) || last
+            : last;
+          const initials = userRole === "seller"
+            ? farmerInitials(counterpart)
+            : p ? p.initials || farmerInitials(p.seller) : "LF";
+          return '<button class="saved-chat" data-chat-id="' + escapeHtml(chat.id) + '"><span class="farmer-avatar">' + escapeHtml(initials) + '</span><span><strong>' + escapeHtml(counterpart) + '</strong><small>' + escapeHtml(preview ? preview.text : "Saved conversation") + '</small></span>' + icon("arrow", "go") + '</button>';
+        }).join("") : emptyState("chat", "No saved conversations", userRole === "buyer" ? "Message a local farmer to start a conversation. Your chats stay available offline." : "Buyer messages about your listings will appear here.");
+        document.querySelectorAll("#messagesList [data-chat-id]").forEach(function (button) {
+          button.addEventListener("click", function () { openChat(button.dataset.chatId); });
+        });
+        renderRecommendations();
+        updateHomeBadges();
+      }
+      function visibleChatsForRole() {
+        return chats.filter(function (chat) {
+          const p = productById(chat.id);
+          return userRole === "seller" ? !!p && p.seller === account.name : !p || p.seller !== account.name;
+        });
+      }
+      function chatCounterparty(chat, product) {
+        if (userRole !== "seller") return product ? product.seller : "Local farmer";
+        return chat.buyerName && chat.buyerName !== account.name ? chat.buyerName : "Local buyer";
+      }
+      function openProduct(id) {
+        const p = productById(id);
+        if (!p) return;
+        if (userRole === "buyer" && p.seller === account.name) {
+          notify("Your own listings are shown in Seller Center.");
+          return;
+        }
+        selectedProductId = id;
+        quantity = 1;
+        const stock = availableStock(p);
+        const available = stock > 0;
+        const rating = p.rating && p.rating !== "New listing"
+          ? '<span class="stars">★</span><strong>' + escapeHtml(p.rating) + '</strong>'
+          : '<strong>New local listing</strong>';
+        document.getElementById("detailContent").innerHTML =
+          '<div class="detail-photo"><button class="back" data-back aria-label="Back">' + icon("back") + '</button>' + productArtwork(p) + '<span class="detail-image-count">1 / 1</span><button class="heart ' + (favorites.indexOf(p.id) !== -1 ? "saved" : "") + '" data-favorite="' + p.id + '" aria-label="Save ' + escapeHtml(p.name) + '" aria-pressed="' + String(favorites.indexOf(p.id) !== -1) + '">' + icon("heart") + '</button></div>' +
+          '<div class="detail-body">' +
+          '<div class="detail-seller"><span class="farmer-avatar">' + escapeHtml(p.initials || farmerInitials(p.seller)) + '</span><span class="detail-seller-copy"><strong>' + escapeHtml(p.seller) + ' <span class="verified">✓ Verified farmer</span></strong><small>' + escapeHtml(p.place) + '</small></span>' + icon("arrow") + '</div>' +
+          '<div class="detail-price-row"><div class="detail-price">' + formatMoney(p.price) + ' <small>/ ' + escapeHtml(p.unit) + '</small></div><span class="detail-stock-count">' + (available ? escapeHtml(String(stock)) + ' ' + escapeHtml(p.unit) + ' available' : 'Sold out') + '</span></div>' +
+          '<div class="detail-head"><h1>' + escapeHtml(p.name) + '</h1></div>' +
+          '<div class="detail-review-row">' + rating + '</div>' +
+          '<div class="detail-availability ' + (available ? "" : "sold") + '">' + icon(available ? "check" : "box") + '<span>' + (available ? 'Available now · ' + escapeHtml(String(stock)) + ' ' + escapeHtml(p.unit) + ' in stock' : 'Currently sold out') + '</span></div>' +
+          '<div class="detail-meta"><div class="detail-meta-row">' + icon("pin") + '<span>From ' + escapeHtml(p.place) + '</span></div><div class="detail-meta-row">' + icon("truck") + '<span>Message the farmer to arrange pickup or delivery</span></div><div class="detail-meta-row">' + icon("signal") + '<span>Updated ' + escapeHtml(p.updated) + (offline ? ' · saved offline' : '') + '</span></div></div>' +
+          '<div class="srp-box"><span>Suggested retail price</span><strong>' + formatMoney(p.srp || p.price) + ' / ' + escapeHtml(p.unit) + '</strong></div>' +
+          '<div class="detail-quantity-row"><span>Quantity</span><div class="quantity"><button id="qtyMinus" aria-label="Decrease quantity">−</button><strong id="buyQuantity">1</strong><button id="qtyPlus" aria-label="Increase quantity">+</button></div></div>' +
+          '<p class="detail-offline-note">Listings are saved for offline browsing. Please confirm current stock and final price with the farmer.</p>' +
+          '</div>' +
+          '<div class="detail-buybar"><button class="detail-quick-action" id="messageFarmer" aria-label="Message farmer">' + icon("chat") + '<span>Chat</span></button><button class="detail-quick-action" id="addToCart" aria-label="Add to cart"' + (available ? "" : " disabled") + '>' + icon("cart") + '<span>Add to cart</span></button><button class="primary" id="buyNow"' + (available ? "" : " disabled") + '>Buy Now</button></div>';
+        setScreen("detailScreen");
+        document.querySelector("#detailContent [data-back]").addEventListener("click", goBack);
+        document.querySelector("#detailContent [data-favorite]").addEventListener("click", function (event) {
+          const button = event.currentTarget;
+          const saved = toggleFavorite(id);
+          button.classList.toggle("saved", saved);
+          button.setAttribute("aria-pressed", String(saved));
+          notify(saved ? "Saved to your favorites." : "Removed from your favorites.");
+          renderProducts();
+        });
+        document.getElementById("qtyMinus").addEventListener("click", function () {
+          quantity = Math.max(1, quantity - 1);
+          document.getElementById("buyQuantity").textContent = quantity;
+        });
+        document.getElementById("qtyPlus").addEventListener("click", function () {
+          if (quantity >= stock) { notify("Only " + stock + " " + p.unit + " available."); return; }
+          quantity += 1;
+          document.getElementById("buyQuantity").textContent = quantity;
+        });
+        document.getElementById("messageFarmer").addEventListener("click", function () { openChat(id); });
+        document.getElementById("addToCart").addEventListener("click", function () {
+          const item = cartItems.find(function (entry) { return entry.id === id; });
+          const nextQuantity = (item ? item.quantity : 0) + quantity;
+          if (nextQuantity > availableStock(p)) {
+            notify("Only " + availableStock(p) + " " + p.unit + " available.");
+            return;
+          }
+          if (item) item.quantity = nextQuantity;
+          else cartItems.push({ id: id, quantity: quantity });
+          store("cart", cartItems);
+          updateHomeBadges();
+          notify(offline ? "Added to your cart on this device." : "Added to your cart.");
+        });
+        document.getElementById("buyNow").addEventListener("click", function () {
+          beginCheckout([{ id: id, quantity: quantity }], "buyNow");
+        });
+      }
+      function openChat(id) {
+        const p = productById(id) || productById("tomato");
+        if (userRole === "buyer" && p.seller === account.name) {
+          notify("This is your own listing, not a farmer conversation.");
+          renderMessages();
+          setScreen("messagesScreen");
+          return;
+        }
+        activeChatId = id;
+        const convo = chats.find(function (chat) { return chat.id === id; });
+        const counterpart = chatCounterparty(convo || {}, p);
+        document.getElementById("chatFarmerName").textContent = counterpart;
+        document.getElementById("chatFarmerAvatar").textContent = userRole === "seller"
+          ? farmerInitials(counterpart)
+          : p.initials || farmerInitials(p.seller);
+        document.getElementById("chatCall").hidden = userRole === "seller" && !(convo && convo.buyerPhone);
+        document.getElementById("chatCall").setAttribute("aria-label", userRole === "seller" ? "Call buyer" : "Call farmer");
+        document.getElementById("chatGuidance").textContent = userRole === "seller"
+          ? "Reply to the buyer about your listing and arrange pickup or delivery."
+          : "Confirm current availability and price with the farmer before arranging pickup.";
+        let messages = convo ? convo.messages : [
+          { mine: true, text: "Magandang araw po! May available pa po bang " + p.name.toLowerCase() + "?", time: "9:30 AM" },
+          { mine: false, text: "Oo, meron pa po.", time: "9:33 AM" }
+        ];
+        document.getElementById("chatMessages").innerHTML = messages.map(function (m) {
+          const isMine = userRole === "seller" ? !m.mine : m.mine;
+          return '<div class="bubble ' + (isMine ? "mine" : "theirs") + '">' + escapeHtml(m.text) + '<small>' + escapeHtml(m.time) + '</small></div>';
+        }).join("");
+        setScreen("chatScreen");
+      }
+      function renderInventory() {
+        const ownProducts = inventory.map(function (item) { return productById(item.id); }).filter(function (product) {
+          return product && product.seller === account.name;
+        });
+        const sellerOrders = load("orders", []).filter(function (order) { return order.seller === account.name; });
+        const availableCount = ownProducts.filter(function (product) {
+          const item = inventory.find(function (entry) { return entry.id === product.id; });
+          return item && item.available && item.quantity > 0;
+        }).length;
+        const openOrderCount = sellerOrders.filter(function (order) {
+          return order.status !== "Completed" && order.status !== "Cancelled";
+        }).length;
+        const orderValue = sellerOrders.reduce(function (total, order) {
+          const product = productById(order.id);
+          return total + (product ? Number(order.unitPrice || product.price) * Number(order.quantity || 0) : 0);
+        }, 0);
+        const recentOrderRows = sellerOrders.slice(0, 3).map(function (order) {
+          const product = productById(order.id);
+          const amount = product ? formatMoney(Number(order.unitPrice || product.price) * Number(order.quantity || 0)) : formatMoney(0);
+          return '<div class="order-row"><div class="order-thumb">' + (product ? productArtwork(product) : icon("box")) + '</div><div class="order-copy"><strong>' + escapeHtml(order.buyer || "Marketplace buyer") + '</strong><span>' +
+            escapeHtml(product ? product.name : "Produce order") + ' · ' + escapeHtml(String(order.quantity || 0)) + ' ' + escapeHtml(product ? product.unit : "items") + ' · ' + amount +
+            '</span></div><span class="status-tag">' + escapeHtml(order.status || "New") + '</span></div>';
+        }).join("");
+        document.getElementById("inventoryContent").innerHTML =
+          '<div class="seller-header"><div class="farmer-avatar">' + escapeHtml(farmerInitials(account.name)) + '</div><div><strong>' + escapeHtml(account.name) + '</strong><span>' + (userRole === "seller" ? "Verified Farmer" : "Buyer") + ' · ' + escapeHtml(account.location || "Sorsogon City") + '</span></div></div>' +
+          '<div class="seller-stats"><div class="seller-stat"><span>My products</span><strong>' + ownProducts.length + '</strong></div><div class="seller-stat"><span>Available</span><strong>' + availableCount + '</strong></div><div class="seller-stat"><span>Open orders</span><strong>' + openOrderCount + '</strong></div><div class="seller-stat"><span>Order value</span><strong>' + formatMoney(orderValue) + '</strong></div></div>' +
+          '<div class="section-title"><h2>Recent Orders</h2><button class="text-button" data-open-orders>See All</button></div>' +
+          (recentOrderRows || emptyState("orders", "No orders yet", "Buyer orders for your products will appear here.")) +
+          '<div class="section-title"><h2>My Products</h2><button class="text-button" id="addListing">+ Add product</button></div>' +
+          '<div id="listingFormContainer"></div>' +
+          '<div id="inventoryRows">' + ownProducts.map(function (p) {
+            const item = inventory.find(function (entry) { return entry.id === p.id; });
+            return '<div class="inventory-item"><div class="product-image">' + productArtwork(p) + '</div><div class="inventory-details"><strong>' + escapeHtml(p.name) + ' · ' + formatMoney(p.price) + '/' + escapeHtml(p.unit) + '</strong><small>Last updated ' + escapeHtml(p.updated) + '</small>' +
+              '<div class="stock-controls"><button data-quantity="-1" data-id="' + p.id + '">−</button><b>' + item.quantity + '</b><button data-quantity="1" data-id="' + p.id + '">+</button><small>' + escapeHtml(p.unit) + '</small></div></div></div>' +
+              '<select class="availability-select" data-availability="' + p.id + '"><option value="yes" ' + (item.available ? "selected" : "") + '>Available</option><option value="no" ' + (!item.available ? "selected" : "") + '>Sold out</option></select>';
+          }).join("") + '</div>' +
+          '<div class="sync-card"><span style="font-size:30px">✓</span><div><strong>Saved on this device</strong><small>Inventory is stored in this browser and does not sync to a marketplace server.</small></div></div>' +
+          '<button class="primary full" id="saveInventory" style="margin-top:15px">Save Changes</button>';
+        document.querySelectorAll("[data-quantity]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            const item = inventory.find(function (entry) { return entry.id === button.dataset.id; });
+            item.quantity = Math.max(0, item.quantity + Number(button.dataset.quantity));
+            const p = productById(item.id);
+            p.stock = item.quantity;
+            markLocalChange();
+            store("inventory", inventory); store("products", products);
+            renderInventory();
+          });
+        });
+        document.querySelectorAll("[data-availability]").forEach(function (select) {
+          select.addEventListener("change", function () {
+            const item = inventory.find(function (entry) { return entry.id === select.dataset.availability; });
+            item.available = select.value === "yes";
+            markLocalChange();
+            renderInventory();
+          });
+        });
+        document.getElementById("saveInventory").addEventListener("click", function () {
+          store("inventory", inventory); store("products", products);
+          notify("Inventory changes saved on this device.");
+          renderProducts();
+        });
+        document.getElementById("addListing").addEventListener("click", function () {
+          const formContainer = document.getElementById("listingFormContainer");
+          formContainer.innerHTML =
+            '<form id="listingForm" class="section-card">' +
+              '<h3>Add a product</h3>' +
+              '<label class="field-label" for="listingName">Product name</label><input id="listingName" class="field-input" required maxlength="60" placeholder="e.g. Fresh mangoes">' +
+              '<label class="field-label" for="listingCategory">Category</label><select id="listingCategory" class="field-input"><option value="vegetables">Vegetables</option><option value="fruits">Fruits</option><option value="staples">Staples</option></select>' +
+              '<div class="form-row"><div><label class="field-label" for="listingPrice">Price (₱)</label><input id="listingPrice" class="field-input" type="number" min="0.01" step="0.01" required placeholder="0.00"></div><div><label class="field-label" for="listingUnit">Sold per</label><select id="listingUnit" class="field-input"><option>kg</option><option>bundle</option><option>piece</option><option>pack</option></select></div></div>' +
+              '<label class="field-label" for="listingQuantity">Available quantity</label><input id="listingQuantity" class="field-input" type="number" min="0" step="1" required placeholder="e.g. 10">' +
+              '<label class="field-label" for="listingPhone">Contact number for SMS (optional)</label><input id="listingPhone" class="field-input" type="tel" placeholder="+63 9XX XXX XXXX">' +
+              '<div class="form-row"><button type="button" class="outline full" id="cancelListing">Cancel</button><button type="submit" class="primary full">Save product</button></div>' +
+            '</form>';
+          document.getElementById("cancelListing").addEventListener("click", function () { formContainer.innerHTML = ""; });
+          document.getElementById("listingForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const name = document.getElementById("listingName").value.trim();
+            const price = Number(document.getElementById("listingPrice").value);
+            const quantity = Number(document.getElementById("listingQuantity").value);
+            if (!name || !Number.isFinite(price) || price <= 0 || !Number.isInteger(quantity) || quantity < 0) {
+              notify("Enter a product name, valid price, and whole-number quantity.");
+              return;
+            }
+            const category = document.getElementById("listingCategory").value;
+            const id = "listing-" + Date.now();
+            const initials = account.name.split(/\s+/).map(function (part) { return part.charAt(0); }).join("").slice(0, 2).toUpperCase();
+            const product = {
+              id: id,
+              name: name,
+              category: category,
+              price: price,
+              unit: document.getElementById("listingUnit").value,
+              stock: quantity,
+              seller: account.name,
+              initials: initials,
+              place: account.location || "Sorsogon City",
+              rating: "New listing",
+              srp: price,
+              phone: document.getElementById("listingPhone").value.trim() || account.phone || "",
+              updated: "Just now"
+            };
+            products.unshift(product);
+            inventory.push({ id: id, quantity: quantity, available: quantity > 0 });
+            store("products", products);
+            store("inventory", inventory);
+            markLocalChange();
+            renderInventory();
+            renderProducts();
+            notify(name + " added to your products.");
+          });
+        });
+        document.querySelector("[data-open-orders]").addEventListener("click", function () { renderOrders(); setScreen("ordersScreen"); });
+      }
+      function renderOrders() {
+        const orders = load("orders", []);
+        if (userRole === "seller") {
+          const sellerOrders = orders.filter(function (order) { return order.seller === account.name; });
+          document.getElementById("ordersContent").innerHTML =
+            '<div class="section-title"><h2>Orders for your products</h2><span class="status-tag">' + sellerOrders.length + ' orders</span></div>' +
+            '<p class="recommend-note">Open an order to see the buyer’s address and chosen delivery method.</p>' +
+            (sellerOrders.length ? sellerOrders.map(function (order) {
+              const items = orderItems(order);
+              const product = productById(items[0].id);
+              const orderIndex = orders.indexOf(order);
+              return '<button class="order-row order-open" data-order-index="' + orderIndex + '"><div class="order-thumb">' + (product ? productArtwork(product) : icon("box")) + '</div><div class="order-copy"><strong>' + escapeHtml(order.buyer || "Marketplace buyer") + '</strong><span>' + items.length + ' item(s) · ' + formatMoney(orderTotal(order)) + '</span></div><span class="status-tag">' + escapeHtml(orderStatus(order)) + '</span></button>';
+            }).join("") : emptyState("orders", "No orders yet", "New orders for your products will appear here.")) +
+            '<button class="primary full" id="manageProducts">Manage my products</button>';
+          document.querySelectorAll("[data-order-index]").forEach(function (button) {
+            button.addEventListener("click", function () {
+              renderOrderDetail(Number(button.dataset.orderIndex));
+              setScreen("orderDetailScreen");
+            });
+          });
+          document.getElementById("manageProducts").addEventListener("click", function () { renderInventory(); setScreen("inventoryScreen"); });
+          return;
+        }
+        const buyerOrders = orders.filter(function (order) { return order.buyer === account.name; });
+        const filters = ["All", "To Pay", "To Ship", "To Receive", "Completed"];
+        const visibleOrders = buyerOrderFilter === "All"
+          ? buyerOrders
+          : buyerOrders.filter(function (order) { return orderStatus(order) === buyerOrderFilter; });
+        document.getElementById("ordersContent").innerHTML =
+          '<div class="section-title"><h2>My Purchases</h2><span class="status-tag">' + visibleOrders.length + ' orders</span></div>' +
+          '<div class="order-filter-tabs">' + filters.map(function (filter) {
+            return '<button class="order-filter-tab ' + (buyerOrderFilter === filter ? "active" : "") + '" data-order-filter="' + filter + '">' + filter + '</button>';
+          }).join("") + '</div>' +
+          (visibleOrders.length ? visibleOrders.map(function (order) {
+            const items = orderItems(order);
+            const first = items[0] || {};
+            const product = productById(first.id);
+            const orderIndex = orders.indexOf(order);
+            return '<button class="order-row order-open" data-order-index="' + orderIndex + '"><div class="order-thumb">' + (product ? productArtwork(product) : icon("box")) + '</div><div class="order-copy"><strong>' + escapeHtml(product ? product.name : "Produce order") + (items.length > 1 ? " +" + (items.length - 1) + " more" : "") + '</strong><span>' + items.reduce(function (count, item) { return count + Number(item.quantity || 0); }, 0) + ' item(s) · ' + formatMoney(orderTotal(order)) + ' · ' + escapeHtml(order.delivery || "Delivery") + '</span></div><span class="status-tag">' + escapeHtml(orderStatus(order)) + '</span></button>';
+          }).join("") : emptyState("orders", "No " + (buyerOrderFilter === "All" ? "orders" : buyerOrderFilter.toLowerCase() + " orders"), "Your purchases will appear here after checkout.")) +
+          '<p class="recommend-note">Select an order to view its delivery address and transport details.</p>';
+        document.querySelectorAll("[data-order-filter]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            buyerOrderFilter = button.dataset.orderFilter;
+            renderOrders();
+          });
+        });
+        document.querySelectorAll("[data-order-index]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            renderOrderDetail(Number(button.dataset.orderIndex));
+            setScreen("orderDetailScreen");
+          });
+        });
+      }
+      function renderOrderDetail(orderIndex) {
+        const orders = load("orders", []);
+        const order = orders[orderIndex];
+        if (!order) {
+          notify("This order is no longer available on this device.");
+          renderOrders();
+          setScreen("ordersScreen");
+          return;
+        }
+        const items = orderItems(order);
+        document.getElementById("orderDetailContent").innerHTML =
+          '<div class="section-card"><div class="section-title"><h2>' + escapeHtml(orderStatus(order)) + '</h2><span class="status-tag">' + escapeHtml(orderStatus(order)) + '</span></div>' +
+          '<p class="recommend-note">Order placed ' + new Date(order.date || Date.now()).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) + '</p>' +
+          '<h3>Delivery details</h3><p><strong>' + escapeHtml(order.recipient || order.buyer || "") + '</strong><br>' + escapeHtml(order.phone || "") + '<br>' + escapeHtml(order.address || "No delivery address saved.") + '</p>' +
+          '<p><strong>Transport:</strong> ' + escapeHtml(order.delivery || "Not specified") + '<br><strong>Seller:</strong> ' + escapeHtml(order.seller || "Local farmer") + '</p>' +
+          (order.message ? '<p><strong>Message:</strong> ' + escapeHtml(order.message) + '</p>' : '') + '</div>' +
+          '<div class="section-card"><h3>Items</h3>' + items.map(function (item) {
+            const product = productById(item.id);
+            return '<div class="order-row"><div class="order-thumb">' + (product ? productArtwork(product) : icon("box")) + '</div><div class="order-copy"><strong>' + escapeHtml(product ? product.name : "Produce order") + '</strong><span>' + item.quantity + ' ' + escapeHtml(product ? product.unit : "items") + ' · ' + formatMoney(Number(item.quantity) * Number(item.unitPrice)) + '</span></div></div>';
+          }).join("") +
+          '<div class="profile-block-head" style="margin-top:14px"><span>Delivery fee</span><strong>' + formatMoney(order.deliveryFee || 0) + '</strong></div>' +
+          '<div class="profile-block-head"><strong>Total</strong><strong>' + formatMoney(orderTotal(order)) + '</strong></div>' +
+          '<button class="outline full" id="trackOrderButton" style="margin-top:12px">Track order</button>' +
+          '<button class="primary full" id="contactOrderSeller">Contact ' + (userRole === "seller" ? "buyer" : "seller") + '</button></div>';
+        document.getElementById("trackOrderButton").addEventListener("click", function () {
+          selectedOrderIndex = orderIndex;
+          renderTracking(orderIndex);
+          setScreen("trackingScreen");
+        });
+        document.getElementById("contactOrderSeller").addEventListener("click", function () {
+          const firstItem = items[0];
+          if (firstItem && firstItem.id) openChat(firstItem.id);
+        });
+      }
+      function renderCart() {
+        const content = document.getElementById("cartContent");
+        updateHomeBadges();
+        if (!cartItems.length) {
+          content.innerHTML = emptyState("cart", "Your cart is empty", "Browse local produce and add items to get started.") + '<button class="primary full" id="continueShopping">Continue shopping</button>';
+          document.getElementById("continueShopping").addEventListener("click", function () { setScreen("homeScreen"); });
+          return;
+        }
+        let subtotal = 0;
+        content.innerHTML = cartItems.map(function (item) {
+          const product = productById(item.id);
+          if (!product) return "";
+          subtotal += product.price * item.quantity;
+          return '<div class="cart-item"><div class="order-thumb">' + productArtwork(product) + '</div><div class="cart-item-copy"><strong>' + escapeHtml(product.name) + '</strong><small>' +
+            formatMoney(product.price) + '/' + escapeHtml(product.unit) + ' · ' + escapeHtml(product.seller) + '</small></div><div class="cart-quantity"><button data-cart-action="decrease" data-cart-id="' +
+            item.id + '" aria-label="Decrease ' + escapeHtml(product.name) + '">−</button><b>' + item.quantity + '</b><button data-cart-action="increase" data-cart-id="' +
+            item.id + '" aria-label="Increase ' + escapeHtml(product.name) + '"' + (item.quantity >= availableStock(product) ? " disabled" : "") + '>' +
+            '+' + '</button></div><button class="text-button" data-cart-action="remove" data-cart-id="' +
+            item.id + '" aria-label="Remove ' + escapeHtml(product.name) + '">×</button></div>';
+        }).join("") + '<div class="profile-block-head" style="margin-top:16px"><strong>Subtotal</strong><strong>' + formatMoney(subtotal) + '</strong></div>' +
+          '<p class="recommend-note">Add your delivery address and preferred transport before placing the order.</p><button class="primary full" id="checkoutCart">Continue to checkout</button>';
+        document.querySelectorAll("[data-cart-action]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            const item = cartItems.find(function (entry) { return entry.id === button.dataset.cartId; });
+            if (!item) return;
+            if (button.dataset.cartAction === "increase") {
+              const product = productById(item.id);
+              if (!product || item.quantity >= availableStock(product)) {
+                notify("No more stock is available for this item.");
+                return;
+              }
+              item.quantity += 1;
+            }
+            if (button.dataset.cartAction === "decrease") item.quantity -= 1;
+            if (button.dataset.cartAction === "remove" || item.quantity < 1) {
+              cartItems = cartItems.filter(function (entry) { return entry.id !== item.id; });
+            }
+            store("cart", cartItems);
+            renderCart();
+          });
+        });
+        document.getElementById("checkoutCart").addEventListener("click", function () {
+          beginCheckout(cartItems.slice(), "cart");
+        });
+      }
+      function renderNotifications() {
+        const orders = load("orders", []);
+        const roleOrders = orders.filter(function (order) {
+          return userRole === "seller" ? order.seller === account.name : order.buyer === account.name;
+        });
+        document.getElementById("orderNotificationList").innerHTML = roleOrders.length ? roleOrders.slice(0, 5).map(function (order) {
+          const product = productById(order.id);
+          const date = new Date(order.date).toLocaleString([], { dateStyle: "short", timeStyle: "short" });
+          return '<button class="notification-card" data-open-order-updates><span class="notification-icon">' + icon("orders") + '</span><span><strong>' +
+            escapeHtml(userRole === "seller" ? "New order for " + (product ? product.name : "your listing") : product ? product.name + " order update" : "Order update") + '</strong><small>' +
+            escapeHtml(order.quantity + " " + (product ? product.unit : "items") + " · " + order.status + " · " + date) +
+            '</small></span><span class="notification-arrow">›</span></button>';
+        }).join("") : emptyState("orders", "No order updates", userRole === "seller" ? "Orders from buyers will appear here." : "Updates about your purchases will appear here.");
+        const updates = userRole === "seller" ? [
+          { category: "Marketplace", icon: "box", title: "Keep listings up to date", text: "Update quantities and mark produce sold out when needed.", action: "inventoryScreen" },
+          { category: "Farmers", icon: "chat", title: "Respond to buyers", text: "Review saved conversations about your listings.", action: "messagesScreen" },
+          { category: "Offline", icon: "signal", title: "Manage stock offline", text: "Changes are saved on this device only; there is no marketplace sync.", action: "inventoryScreen" },
+          { category: "Delivery", icon: "orders", title: "Review buyer orders", text: "Check new orders and coordinate delivery details.", action: "ordersScreen" }
+        ] : [
+          { category: "Marketplace", icon: "leaf", title: "Fresh listings nearby", text: "Browse produce shared by local Sorsogon farmers.", action: "homeScreen" },
+          { category: "Farmers", icon: "chat", title: "Ask a farmer directly", text: "Use Messages to check stock, harvest times, and prices.", action: "messagesScreen" },
+          { category: "Offline", icon: "signal", title: "Your catalog works offline", text: "Listings saved on this device remain available without a connection.", action: "catalogScreen" },
+          { category: "Delivery", icon: "orders", title: "Compare local delivery", text: "Review rider, tricycle, hauler, and barangay hub options.", action: "ordersScreen" }
+        ];
+        function showUpdates(category) {
+          const visible = category === "All" ? updates : updates.filter(function (update) { return update.category === category; });
+          document.getElementById("latestUpdates").innerHTML = visible.map(function (update) {
+            return '<button class="notification-card" data-latest-action="' + update.action + '"><span class="notification-icon">' + icon(update.icon) + '</span><span><strong>' +
+              escapeHtml(update.title) + '</strong><small>' + escapeHtml(update.text) + '</small></span><span class="notification-arrow">›</span></button>';
+          }).join("");
+          document.querySelectorAll("[data-latest-action]").forEach(function (button) {
+            button.onclick = function () {
+              const destination = button.dataset.latestAction;
+              if (destination === "catalogScreen") renderCachedCatalog();
+              if (destination === "ordersScreen") renderOrders();
+              if (destination === "messagesScreen") renderMessages();
+              if (destination === "inventoryScreen") renderInventory();
+              setScreen(destination);
+            };
+          });
+        }
+        document.querySelectorAll("[data-update-category]").forEach(function (button) {
+          button.onclick = function () {
+            document.querySelectorAll("[data-update-category]").forEach(function (tab) { tab.classList.toggle("active", tab === button); });
+            showUpdates(button.dataset.updateCategory);
+          };
+        });
+        document.querySelectorAll("[data-open-order-updates]").forEach(function (button) {
+          button.onclick = function () { renderOrders(); setScreen("ordersScreen"); };
+        });
+        document.getElementById("markNotificationsRead").onclick = function () {
+          store("notificationsRead", true);
+          notify("Notifications marked as read.");
+        };
+        document.getElementById("viewAllOrderUpdates").onclick = function () { renderOrders(); setScreen("ordersScreen"); };
+        const activeCategory = document.querySelector("[data-update-category].active");
+        showUpdates(activeCategory ? activeCategory.dataset.updateCategory : "Marketplace");
+      }
+      function renderTracking(orderIndex) {
+        const order = load("orders", [])[orderIndex];
+        if (!order) {
+          notify("This order is no longer available on this device.");
+          renderOrders();
+          setScreen("ordersScreen");
+          return;
+        }
+        const status = orderStatus(order);
+        const currentStep = status === "Completed" ? 3 : status === "To Receive" ? 2 : status === "To Ship" ? 1 : 0;
+        const steps = [
+          { title: "Order placed", detail: new Date(order.date || Date.now()).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) },
+          { title: "Seller preparing your order", detail: "Waiting for the farmer to confirm preparation." },
+          { title: "On the way", detail: "Delivery progress must be confirmed with the seller." },
+          { title: "Delivered", detail: "This order is marked complete." }
+        ];
+        const progress = steps.map(function (step, index) {
+          const state = index < currentStep ? "done" : index === currentStep ? "current" : "";
+          const detail = index === currentStep && index === 1 && status === "To Ship"
+            ? "Current status · contact the farmer for an updated estimate."
+            : step.detail;
+          return '<div class="tracking-step ' + state + '"><span class="tracking-step-dot">' + (index < currentStep ? "✓" : "") + '</span><div class="tracking-step-copy"><strong>' + step.title + '</strong><small>' + escapeHtml(detail) + '</small></div></div>';
+        }).join("");
+        document.getElementById("trackingContent").innerHTML =
+          '<div class="section-card"><div class="tracking-summary"><strong>' + escapeHtml(status) + '</strong><span>Order #' + escapeHtml(String(order.orderId || "local").slice(0, 8).toUpperCase()) + '</span><span>Transport: ' + escapeHtml(order.delivery || "Not specified") + '</span><span>Delivering to: ' + escapeHtml(order.address || "No address saved.") + '</span></div></div>' +
+          '<div class="section-card"><h3>Delivery progress</h3><p class="tracking-demo-note">Demo tracking only. This local app does not receive live driver location or seller updates. Contact the farmer to confirm the actual delivery status.</p><div class="tracking-progress">' + progress + '</div>' +
+          '<button class="primary full" id="contactTrackingSeller">Contact ' + (userRole === "seller" ? "buyer" : "seller") + '</button></div>';
+        document.getElementById("contactTrackingSeller").addEventListener("click", function () {
+          const firstItem = orderItems(order)[0];
+          if (firstItem && firstItem.id) openChat(firstItem.id);
+        });
+      }
+      function enterLocalSession(localUser) {
+        const sameUser = load("localProfileOwnerId", null) === localUser.id;
+        if (!sameUser) {
+          userRole = "buyer";
+          setupComplete = false;
+          account = { name: localUser.name, location: "Sorsogon City" };
+          store("role", userRole);
+          store("setupComplete", false);
+        } else {
+          account = load("account", { name: localUser.name, location: "Sorsogon City" });
+          account.name = localUser.name;
+        }
+        if (localUser.type === "email") account.email = localUser.identifier;
+        else account.phone = localUser.identifier;
+        localAuthUser = localUser;
+        store("localProfileOwnerId", localUser.id);
+        store("activeLocalAccountId", localUser.id);
+        store("account", account);
+        if (setupComplete) {
+          renderRoleNavigation();
+          renderProfile();
+          renderInventory();
+          renderProducts();
+          renderMessages();
+          renderNotifications();
+          setScreen(userRole === "seller" ? "inventoryScreen" : "homeScreen");
+        } else {
+          authStage = "role";
+          renderAuth();
+          setScreen("authScreen");
+        }
+      }
+      function renderProfile() {
+        const profileName = account.name;
+        const roleLabel = userRole === "seller" ? "Verified Farmer · Seller" : "Buyer · " + (account.location || "Sorsogon City");
+        const orders = load("orders", []);
+        const buyerOrders = orders.filter(function (order) { return order.buyer === account.name; });
+        const countBuyerStatus = function (status) {
+          return buyerOrders.filter(function (order) { return orderStatus(order) === status; }).length;
+        };
+        const accountWorkspace = userRole === "buyer"
+          ? '<section class="profile-block"><div class="profile-block-head"><h2>My Purchases</h2><button class="text-button" data-profile-orders data-order-filter="All">View order history ›</button></div>' +
+            '<div class="profile-grid"><button data-profile-orders data-order-filter="To Pay"><span>' + icon("wallet") + '</span>To Pay<small>' + countBuyerStatus("To Pay") + '</small></button><button data-profile-orders data-order-filter="To Ship"><span>' + icon("orders") + '</span>To Ship<small>' + countBuyerStatus("To Ship") + '</small></button><button data-profile-orders data-order-filter="To Receive"><span>' + icon("truck") + '</span>To Receive<small>' + countBuyerStatus("To Receive") + '</small></button><button data-profile-orders data-order-filter="Completed"><span>' + icon("star") + '</span>To Rate<small>' + countBuyerStatus("Completed") + '</small></button></div>' +
+            '<button class="profile-service" id="openDeliveryServices"><span>' + icon("truck") + '</span><strong>Delivery & Cargo Pooling</strong><span>Compare options ›</span></button></section>' +
+            '<section class="profile-block"><div class="profile-block-head"><h2>My Wallet</h2><span style="font-size:11px;color:#806f61">Payment options</span></div>' +
+            '<div class="wallet-grid"><button data-wallet="Cash on Delivery"><span>' + icon("wallet") + '</span>Cash on Delivery<small>At checkout</small></button><button data-wallet="GCash"><span class="payment-mark">G</span>GCash<small>At checkout</small></button><button data-wallet="Maya"><span class="payment-mark">M</span>Maya<small>At checkout</small></button><button data-wallet="Bank transfer"><span>' + icon("orders") + '</span>Bank transfer<small>At checkout</small></button></div></section>'
+          : '<section class="profile-block"><div class="profile-block-head"><h2>Seller Center</h2><span class="status-tag">' + inventory.filter(function (item) { const product = productById(item.id); return product && product.seller === account.name; }).length + ' products</span></div>' +
+            '<p class="recommend-note">Manage your listings and review orders from buyers.</p><div class="form-row"><button class="outline full" id="profileManageProducts">My products</button><button class="primary full" id="profileSellerOrders">View orders</button></div></section>';
+        document.getElementById("profileContent").innerHTML =
+          '<div class="profile-cover"><div class="profile-identity"><span class="farmer-avatar">' + escapeHtml(farmerInitials(profileName)) + '</span><span><strong>' + escapeHtml(profileName) + '</strong><small>' + escapeHtml(roleLabel) + '</small></span></div></div>' +
+          '<div class="role-switch"><span>Current role: <strong>' + (userRole === "seller" ? "Farmer / Seller" : "Buyer") + '</strong></span><button id="switchRole">Switch to ' + (userRole === "seller" ? "Buyer" : "Farmer / Seller") + '</button></div>' +
+          accountWorkspace +
+          '<section class="profile-block"><div class="profile-block-head"><h2>E-Saud Services</h2><button class="text-button" id="openCatalog">Offline catalog ›</button></div>' +
+          '<div class="profile-tools"><a class="profile-tool" href="./about.html">' + icon("leaf") + 'About E-Saud</a><button class="profile-tool" id="savedChats">' + icon("chat") + 'Saved farmer chats</button><button class="profile-tool" id="helpCentreService">' + icon("user") + 'Help Centre</button>' +
+          '<button class="profile-tool" id="customerServiceService">' + icon("signal") + 'Customer Service</button><button class="profile-tool" id="openVouchers">' + icon("star") + 'Vouchers</button><button class="profile-tool" id="localLogout">Log out</button></div><p class="recommend-note">Local-only account: your profile and orders are saved in this browser.</p></section>';
+        document.getElementById("switchRole").addEventListener("click", function () {
+          userRole = userRole === "buyer" ? "seller" : "buyer";
+          store("role", userRole);
+          renderRoleNavigation();
+          renderProfile();
+          renderInventory();
+          renderProducts();
+          renderMessages();
+          renderNotifications();
+          notify("Switched to " + (userRole === "seller" ? "Farmer / Seller" : "Buyer") + " view.");
+        });
+        document.getElementById("openCatalog").addEventListener("click", function () { renderCachedCatalog(); setScreen("catalogScreen"); });
+        document.getElementById("savedChats").addEventListener("click", function () {
+          const visibleChats = visibleChatsForRole();
+          if (visibleChats.length) openChat(visibleChats[0].id);
+          else { renderMessages(); setScreen("messagesScreen"); }
+        });
+        document.getElementById("helpCentreService").addEventListener("click", function () { notify("Need help? Check your saved catalog or contact a farmer directly."); });
+        document.getElementById("customerServiceService").addEventListener("click", function () { notify("Customer Service contact details are not configured in this demo."); });
+        document.querySelectorAll("[data-profile-orders]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            buyerOrderFilter = button.dataset.orderFilter || "All";
+            renderOrders();
+            setScreen("ordersScreen");
+          });
+        });
+        document.getElementById("localLogout").addEventListener("click", function () {
+          localAuthUser = null;
+          store("activeLocalAccountId", null);
+          authTab = "login";
+          authStage = "account";
+          authIdentifierPrefill = "";
+          authNamePrefill = "";
+          renderAuth();
+          setScreen("authScreen");
+        });
+        if (userRole === "buyer") {
+          document.getElementById("openDeliveryServices").addEventListener("click", function () { renderOrders(); setScreen("ordersScreen"); });
+        } else {
+          document.getElementById("profileManageProducts").addEventListener("click", function () { renderInventory(); setScreen("inventoryScreen"); });
+          document.getElementById("profileSellerOrders").addEventListener("click", function () { renderOrders(); setScreen("ordersScreen"); });
+        }
+        document.getElementById("openVouchers").addEventListener("click", function () { notify("No vouchers available yet. Check back later."); });
+        document.querySelectorAll("[data-wallet]").forEach(function (button) { button.addEventListener("click", function () { notify(button.dataset.wallet + " can be selected at checkout."); }); });
+      }
+      function renderCachedCatalog() {
+        document.getElementById("cacheDate").textContent = "Last uploaded: " + new Date(load("cachedAt", Date.now())).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+        const catalogProducts = products.filter(function (p) { return userRole !== "buyer" || p.seller !== account.name; }).slice(0, 5);
+        document.getElementById("cachedProducts").innerHTML = catalogProducts.map(function (p) {
+          return '<div class="catalog-row"><div class="product-image">' + productArtwork(p) + '</div><div class="product-info"><div class="product-name">' + escapeHtml(p.name) + '</div><div class="product-price">' + formatMoney(p.price) + '/' + escapeHtml(p.unit) + '</div></div><button class="download" data-catalog-product="' + p.id + '" aria-label="View product">' + icon("arrow") + '</button></div>';
+        }).join("") || emptyState("box", "No cached products", "Catalog listings will appear here when available.");
+        document.getElementById("smsProduct").innerHTML = catalogProducts.map(function (p) { return '<option value="' + p.id + '">' + escapeHtml(p.name) + '</option>'; }).join("");
+        document.querySelectorAll("[data-catalog-product]").forEach(function (button) {
+          button.addEventListener("click", function () { openProduct(button.dataset.catalogProduct); });
+        });
+      }
+      function renderAuth() {
+        const root = document.getElementById("authStage");
+        const authScreen = document.querySelector(".auth-screen");
+        authScreen.classList.toggle("welcome-stage", false);
+        authScreen.classList.toggle("account-stage", authStage === "account");
+        authScreen.classList.toggle("role-stage", authStage === "role");
+        document.getElementById("authTagline").textContent = "Connect • Trade • Grow";
+        document.getElementById("authFooter").style.display = "none";
+        if (authStage === "role") {
+          root.innerHTML = '<h1>Create Your Account</h1><p>Choose your primary purpose on E-Saud.</p>' +
+            '<button class="role-choice" data-role="seller"><span class="role-icon">' + icon("leaf") + '</span><span>Farmer / Seller<br><small>Sell your harvest</small></span>' + icon("arrow", "arrow") + '</button>' +
+            '<button class="role-choice buyer" data-role="buyer"><span class="role-icon">' + icon("user") + '</span><span>Buyer<br><small>Buy fresh, local produce</small></span>' + icon("arrow", "arrow") + '</button>';
+          root.querySelectorAll("[data-role]").forEach(function (button) {
+            button.addEventListener("click", function () {
+              userRole = button.dataset.role;
+              setupComplete = true;
+              store("role", userRole);
+              store("setupComplete", true);
+              renderRoleNavigation();
+              renderProfile();
+              renderInventory();
+              renderMessages();
+              setScreen(userRole === "seller" ? "inventoryScreen" : "homeScreen");
+            });
+          });
+          return;
+        }
+
+        authStage = "account";
+        root.innerHTML = '<h1>' + (authTab === "signup" ? "Create Your Account" : "Welcome Back") + '</h1><p>' +
+          (authTab === "signup" ? "Connect with your local farming community." : "Log in to continue to E-Saud.") + '</p>' +
+          '<div class="auth-tabs"><button class="' + (authTab === "login" ? "active" : "") + '" data-auth-tab="login">Log In</button><button class="' + (authTab === "signup" ? "active" : "") + '" data-auth-tab="signup">Sign Up</button></div>' +
+          (authTab === "signup" ? '<label class="field">Your name<input id="authName" type="text" maxlength="60" placeholder="Enter your name" autocomplete="name" required></label>' : '') +
+          '<label class="field">Email or mobile number<input id="authContact" type="text" placeholder="Email or mobile number (09... or +63...)" autocomplete="username" required></label>' +
+          '<label class="field">Password<div class="auth-password-field"><input id="authPassword" type="password" placeholder="Enter your password" autocomplete="' + (authTab === "login" ? "current-password" : "new-password") + '"' + (authTab === "signup" ? ' minlength="6"' : '') + ' required><button type="button" id="togglePassword" aria-label="Show password" aria-pressed="false">Show</button></div></label>' +
+          '<p class="recommend-note">Local-only account: no email/SMS verification or cross-device sync. Anyone with access to this browser can access its saved data.</p>' +
+          '<p class="auth-error" id="authError" role="alert" hidden></p>' +
+          '<button class="primary auth-submit" id="authContinue">Continue</button><div class="auth-foot">' + (authTab === "login" ? "New to E-Saud? " : "Already have an account? ") +
+          '<button class="text-button" data-auth-tab="' + (authTab === "login" ? "signup" : "login") + '">' + (authTab === "login" ? "Sign up" : "Log in") + '</button></div>';
+        if (authIdentifierPrefill) document.getElementById("authContact").value = authIdentifierPrefill;
+        if (authTab === "signup" && authNamePrefill) document.getElementById("authName").value = authNamePrefill;
+        root.querySelectorAll("[data-auth-tab]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            authIdentifierPrefill = document.getElementById("authContact").value.trim();
+            if (authTab === "signup") authNamePrefill = document.getElementById("authName").value.trim();
+            authTab = button.dataset.authTab;
+            renderAuth();
+          });
+        });
+        document.getElementById("togglePassword").addEventListener("click", function () {
+          const passwordInput = document.getElementById("authPassword");
+          const showing = passwordInput.type === "password";
+          passwordInput.type = showing ? "text" : "password";
+          this.textContent = showing ? "Hide" : "Show";
+          this.setAttribute("aria-label", showing ? "Hide password" : "Show password");
+          this.setAttribute("aria-pressed", String(showing));
+        });
+        document.getElementById("authContinue").addEventListener("click", async function () {
+          const button = this;
+          const action = authTab;
+          const contact = document.getElementById("authContact").value.trim();
+          const password = document.getElementById("authPassword").value;
+          const fullName = action === "signup" ? document.getElementById("authName").value.trim() : "";
+          const message = document.getElementById("authError");
+          const showError = function (text) {
+            message.textContent = text;
+            message.hidden = false;
+          };
+          if (!contact || !password || (action === "signup" && !fullName)) {
+            showError(action === "signup" ? "Enter your name, email or mobile number, and password." : "Enter your email or mobile number and password.");
+            return;
+          }
+          if (action === "signup" && password.length < 6) {
+            showError("Choose a password with at least 6 characters.");
+            return;
+          }
+          const identifier = normalizeAuthIdentifier(contact);
+          if (!identifier) {
+            showError("Enter a valid email address or mobile number, such as 09XXXXXXXXX or +639XXXXXXXXX.");
+            return;
+          }
+          button.disabled = true;
+          button.textContent = action === "signup" ? "Creating account…" : "Logging in…";
+          try {
+            const accounts = localAccounts();
+            let localUser;
+            if (action === "signup") {
+              if (accounts.some(function (entry) { return entry.type === identifier.type && entry.identifier === identifier.value; })) {
+                showError("An account already uses this email or number on this device. Log in instead.");
+                return;
+              }
+              const salt = randomHex(16);
+              localUser = {
+                id: randomHex(16),
+                type: identifier.type,
+                identifier: identifier.value,
+                name: fullName,
+                salt: salt,
+                passwordHash: await hashLocalPassword(password, salt),
+                createdAt: Date.now()
+              };
+              saveLocalAccounts(accounts.concat(localUser));
+            } else {
+              localUser = accounts.find(function (entry) {
+                return entry.type === identifier.type && entry.identifier === identifier.value;
+              });
+              if (!localUser) {
+                showError("No account for this email or number is saved on this device. Sign up first.");
+                return;
+              }
+              const passwordHash = await hashLocalPassword(password, localUser.salt);
+              if (!hashMatches(localUser.passwordHash, passwordHash)) {
+                showError("The password is incorrect.");
+                return;
+              }
+            }
+            authIdentifierPrefill = "";
+            authNamePrefill = "";
+            enterLocalSession(localUser);
+          } catch (error) {
+            console.error("E-Saud local account could not be saved or opened.", error);
+            showError(error.message || "Could not open this local account.");
+          } finally {
+            if (button.isConnected) {
+              button.disabled = false;
+              button.textContent = "Continue";
+            }
+          }
+        });
+      }
+      function markLocalChange() {
+        store("cachedAt", Date.now());
+        updateConnection();
+        if (offline) notify("Saved on this device only.");
+      }
+      document.getElementById("offlineToggle").addEventListener("click", function () {
+        demoOffline = !demoOffline;
+        offline = demoOffline || !navigator.onLine;
+        store("offline", demoOffline);
+        updateConnection();
+        notify(demoOffline ? "Offline demo enabled — saved listings stay available." : "Local-only mode enabled.");
+      });
+      document.getElementById("menuButton").addEventListener("click", function () { setScreen("profileScreen"); renderProfile(); });
+      document.getElementById("notificationButton").addEventListener("click", function () { renderNotifications(); setScreen("notificationsScreen"); });
+      document.getElementById("cartButton").addEventListener("click", function () { renderCart(); setScreen("cartScreen"); });
+      document.getElementById("messagesQuickButton").addEventListener("click", function () { renderMessages(); setScreen("messagesScreen"); });
+      document.getElementById("photoSearchButton").addEventListener("click", function () { notify("Photo search is not available in this demo yet."); });
+      document.getElementById("searchInput").addEventListener("input", function () {
+        const term = this.value.trim();
+        if (term.length > 1 && searches[searches.length - 1] !== term) {
+          searches.push(term); searches = searches.slice(-20); store("searches", searches);
+        }
+        renderProducts();
+        renderRecommendations();
+      });
+      document.getElementById("categoryRow").addEventListener("click", function (event) {
+        const button = event.target.closest("[data-category]");
+        if (!button) return;
+        selectedCategory = button.dataset.category;
+        document.querySelectorAll(".chip").forEach(function (chip) { chip.classList.toggle("active", chip === button); });
+        renderProducts();
+      });
+      document.getElementById("seeAll").addEventListener("click", function () {
+        selectedCategory = "all"; document.getElementById("searchInput").value = "";
+        document.querySelectorAll(".chip").forEach(function (chip) { chip.classList.toggle("active", chip.dataset.category === "all"); });
+        renderProducts();
+      });
+      document.querySelectorAll(".bottom-nav [data-screen]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          if (button.dataset.screen === "messagesScreen") renderMessages();
+          if (button.dataset.screen === "inventoryScreen") renderInventory();
+          if (button.dataset.screen === "ordersScreen") renderOrders();
+          if (button.dataset.screen === "notificationsScreen") renderNotifications();
+          if (button.dataset.screen === "profileScreen") renderProfile();
+          setScreen(button.dataset.screen);
+        });
+      });
+      document.querySelectorAll("[data-back]").forEach(function (button) {
+        button.addEventListener("click", goBack);
+      });
+      document.getElementById("chatForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const input = document.getElementById("chatInput");
+        const text = input.value.trim();
+        if (!text) return;
+        let convo = chats.find(function (chat) { return chat.id === activeChatId; });
+        if (!convo) {
+          const p = productById(activeChatId);
+          convo = {
+            id: activeChatId,
+            buyerName: userRole === "buyer" ? account.name : "",
+            buyerPhone: userRole === "buyer" ? account.phone || "" : "",
+            messages: [
+            { mine: true, text: "Magandang araw po! May available pa po bang " + (p ? p.name.toLowerCase() : "produce") + "?", time: "9:30 AM" },
+            { mine: false, text: "Oo, meron pa po.", time: "9:33 AM" }
+          ] };
+          chats.unshift(convo);
+        }
+        convo.messages.push({ mine: userRole !== "seller", text: text, time: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) });
+        store("chats", chats);
+        input.value = "";
+        renderMessages();
+        renderProfile();
+        openChat(activeChatId);
+        if (offline && userRole === "buyer") {
+          const p = productById(activeChatId);
+          if (p && p.phone) {
+            window.location.href = "sms:" + p.phone + "?body=" + encodeURIComponent(text);
+            notify("Opening SMS to contact " + p.seller + ".");
+          } else notify("This seller has not added an SMS contact number.");
+        } else if (offline) {
+          markLocalChange();
+          notify("Reply saved on this device. It will send when connected.");
+        } else notify("Message saved in your conversation.");
+      });
+      document.getElementById("chatCall").addEventListener("click", function () {
+        const p = productById(activeChatId);
+        const convo = chats.find(function (chat) { return chat.id === activeChatId; });
+        const phone = userRole === "seller" ? convo && convo.buyerPhone : p && p.phone;
+        if (phone) window.location.href = "tel:" + phone;
+        else notify(userRole === "seller" ? "This buyer has not added a phone number." : "This seller has not added a phone number.");
+      });
+      document.getElementById("applySmsReply").addEventListener("click", function () {
+        const text = document.getElementById("smsReply").value.trim().toUpperCase();
+        const p = productById(document.getElementById("smsProduct").value);
+        if (!p) return;
+        const qty = text.match(/(?:AVAILABLE|QTY|STOCK)\s*:?\s*(\d+)/);
+        const price = text.match(/PRICE\s*:?\s*(\d+(?:\.\d+)?)/);
+        if (!qty && !price) { notify("Try a reply like AVAILABLE 20 PRICE 65."); return; }
+        if (qty) {
+          p.stock = Number(qty[1]);
+          const own = inventory.find(function (item) { return item.id === p.id; });
+          if (own) {
+            own.quantity = p.stock;
+            own.available = p.stock > 0;
+          }
+        }
+        if (price) p.price = Number(price[1]);
+        store("products", products); store("inventory", inventory); store("cachedAt", Date.now());
+        document.getElementById("smsReply").value = "";
+        renderCachedCatalog(); renderProducts(); renderRecommendations();
+        notify("Saved listing updated from the farmer's reply.");
+      });
+      window.addEventListener("online", function () {
+        offline = demoOffline;
+        updateConnection();
+      });
+      window.addEventListener("offline", function () {
+        offline = true; updateConnection();
+      });
+      if (!load("cachedAt", null)) store("cachedAt", Date.now());
+      updateConnection(); renderRoleNavigation(); renderProducts(); renderRecommendations(); renderMessages(); renderInventory(); renderOrders(); renderProfile(); updateHomeBadges();
+      if ("serviceWorker" in navigator && location.protocol !== "file:") {
+        navigator.serviceWorker.register("./service-worker.js").catch(function (error) {
+          console.error("E-Saud offline app caching could not be enabled.", error);
+          notify("Offline app caching could not be enabled.");
+        });
+      }
+      setScreen("splashScreen");
+      window.setTimeout(function () {
+        const activeId = load("activeLocalAccountId", null);
+        const user = localAccounts().find(function (entry) { return entry.id === activeId; });
+        if (user) {
+          enterLocalSession(user);
+          return;
+        }
+        localAuthUser = null;
+        store("activeLocalAccountId", null);
+        authStage = "account";
+        authTab = "login";
+        renderAuth();
+        setScreen("authScreen");
+      }, 2500);
+    }());
+  </script>
+</body>
+</html>

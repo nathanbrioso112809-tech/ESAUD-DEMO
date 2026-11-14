@@ -1,0 +1,17 @@
+{
+  "name": "E-Saud",
+  "short_name": "E-Saud",
+  "description": "Diretso sa magsasaka, para sa lahat",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FBFAF6",
+  "theme_color": "#FBFAF6",
+  "icons": [
+    {
+      "src": "./esaud-mark-fallback.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

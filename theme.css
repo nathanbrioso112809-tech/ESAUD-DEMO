@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  color-scheme: light;
+  --brand-900: #173b2a;
+  --brand-700: #245c3b;
+  --brand-500: #38834f;
+  --brand-400: #5b9b66;
+  --brand-100: #e2eee1;
+  --sand-50: #ffffff;
+  --sand-100: #f5f7f4;
+  --ink-900: #1d2b22;
+  --ink-600: #526057;
+  --sun-500: #bd821d;
+  --berry-500: #bd493d;
+  --surface: #ffffff;
+  --surface-muted: #f7f8f6;
+  --border: #e4e6dc;
+  --shadow-card: 0 5px 18px rgb(26 49 32 / 7%);
+  --radius-card: 18px;
+  --radius-control: 14px;
+  --font-body: 'Nunito', 'Segoe UI', sans-serif;
+  --font-heading: 'Fredoka', 'Trebuchet MS', sans-serif;
+
+  /* Compatibility aliases for the existing screens. */
+  --green: var(--brand-500);
+  --deep: var(--brand-900);
+  --text-green: var(--brand-900);
+  --pale: var(--sand-100);
+  --sky: var(--sand-50);
+  --paper: var(--sand-50);
+  --line: var(--border);
+  --ink: var(--ink-900);
+  --muted: var(--ink-600);
+  --shadow: var(--shadow-card);
+}
