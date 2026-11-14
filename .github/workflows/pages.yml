@@ -28,11 +28,9 @@ jobs:
       - name: Prepare site
         run: |
           mkdir public
-          cp about.html public/index.html
+          cp index.html public/index.html
           cp about.html public/about.html
-          cp index.html public/app.html
           cp theme.css service-worker.js manifest.webmanifest esaud-mark-fallback.svg .nojekyll public/
-          sed -i 's#./index.html#./app.html#g' public/index.html public/about.html
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
