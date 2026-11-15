@@ -1,0 +1,6 @@
+{
+  "appId": "com.esaud.app",
+  "appName": "E-Saud",
+  "webDir": "www",
+  "android": { "allowMixedContent": false }
+}
